@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prompt Library</title>
+  <style>:root{color-scheme:dark;--bg:#101216;--panel:#191c22;--raised:#22262e;--border:#343944;--text:#e9ecf2;--muted:#9ba5b7;--accent:#a799ed;--positive:#a799ed;--negative:#edacaf;font-family:Inter,"Segoe UI","Noto Sans JP",sans-serif;font-size:14px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text)}button,input,textarea,select{font:inherit}button{cursor:pointer;background:var(--raised);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 11px}button:hover{border-color:var(--accent);background:#30303e}button:disabled{opacity:.4;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}button.primary{background:var(--accent);color:#161320;border-color:var(--accent);font-weight:600}button.danger{color:#ffb2b7}h1,h2,h3,p{margin:0}h1{font-size:18px;letter-spacing:.2px}h2{font-size:17px}h3{font-size:14px}small,.muted{color:var(--muted)}.app-header{min-height:85px;padding:18px 26px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);gap:20px}.brand{display:flex;align-items:center;gap:12px}.brand .muted{font-size:12px;display:block;margin-top:4px}.logo{background:#30283f;color:#c5b5ff;font-size:22px;font-weight:700;padding:7px 13px;border-radius:9px}.header-actions{display:flex;align-items:center;gap:8px}#save-status{font-size:12px;color:var(--muted);margin-right:12px}.tabs{display:flex;gap:24px;padding:0 26px;border-bottom:1px solid var(--border)}.tabs button{background:none;border:none;border-radius:0;padding:15px 2px;color:var(--muted);border-bottom:2px solid transparent}.tabs button.active{border-bottom-color:var(--accent);color:var(--text)}main{padding:22px 26px;max-width:1800px;margin:auto}.page-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}.side-switch{display:flex;gap:4px;background:#15171c;padding:4px;border:1px solid var(--border);border-radius:8px}.side-switch button{background:none;border-color:transparent;min-width:105px}.side-switch button.active{background:#352e48;border-color:#655887;color:#e0d4ff}.side-switch button.active.negative{background:#432c32;border-color:#80505b;color:#ffd5d7}.prompt-layout{display:grid;grid-template-columns:minmax(420px,1.25fr) minmax(330px,1fr);gap:18px;align-items:start}.panel{border:1px solid var(--border);background:var(--panel);border-radius:10px;overflow:hidden}.panel-title{padding:15px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-title p{font-size:12px;color:var(--muted);margin-top:4px}.browser-body{display:grid;grid-template-columns:160px minmax(0,1fr);min-height:470px}.category-nav{padding:12px 9px;background:#16191e;border-right:1px solid var(--border)}.nav-label{font-size:11px;color:var(--muted);letter-spacing:.08em;padding:4px 8px 10px}.category-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}.category-row>button:first-child{flex:1;min-width:0;text-align:left;overflow-wrap:anywhere;background:transparent;border-color:transparent;padding:8px}.category-row>button.active:first-child{background:#312b40;border-color:#55496c;color:#e0d4ff}.icon-button{padding:4px 7px;font-size:12px;background:transparent;flex-shrink:0}.category-nav>.add-category{margin-top:9px;width:100%;font-size:12px}.library-content{padding:16px;min-width:0}.subcategory-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:14px}.subcategory-line button.active{border-color:var(--accent);color:#e0d4ff;background:#312b40}.sub-group{display:flex;align-items:center;gap:2px}.browser-controls{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:14px}.type-switch{display:flex;gap:4px}.type-switch button{background:none;border-color:transparent;padding:6px 9px;color:var(--muted)}.type-switch button.active{background:var(--raised);border-color:var(--border);color:var(--text)}.search{min-width:90px;width:100%;background:#12151a;border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--text)}.item-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:12px}.count{color:var(--muted);font-size:12px;margin-left:auto}.tag-grid{display:flex;flex-wrap:wrap;gap:6px;align-content:start}.tag{display:inline-flex;max-width:100%;align-items:center;border:1px solid #3c414d;border-radius:5px;background:#262b34;min-height:32px}.tag>button:first-child{background:none;border:0;border-radius:4px;text-align:left;padding:5px 9px;font-size:13px;overflow-wrap:anywhere}.tag:hover{border-color:var(--accent)}.tag.selected{background:#3c3151;border-color:#a799ed}.tag .edit-item{border:0;border-left:1px solid var(--border);color:var(--muted);border-radius:0;padding:5px 7px}.block-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}.block{background:#242832;border:1px solid var(--border);border-radius:7px;overflow:hidden;display:flex;flex-direction:column}.block-main{text-align:left;background:none;border:0;border-radius:0;padding:12px;width:100%;flex:1}.block-main strong{display:block;margin-bottom:7px}.block-main p{font-size:12px;line-height:1.6;color:#bdc5d3;white-space:pre-wrap;overflow-wrap:anywhere}.block-footer{display:flex;justify-content:flex-end;border-top:1px solid var(--border);padding:4px}.empty{padding:36px 12px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8}.current-body{padding:16px}.current-list{display:flex;flex-direction:column;gap:7px;margin:0 0 16px;padding:0;list-style:none}.prompt-item{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#242832;border:1px solid var(--border);border-radius:6px}.prompt-item.dragging{opacity:.4}.prompt-item.drag-over{border-color:var(--accent)}.drag-handle{color:var(--muted);cursor:grab}.prompt-item-content{flex:1;min-width:0}.prompt-item-content strong{display:block;font-size:13px;overflow-wrap:anywhere}.prompt-item-content small{display:block;margin-top:3px;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.5}.item-actions{display:flex;gap:2px}.item-actions button{padding:4px 6px;background:transparent;font-size:12px}.field-label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.direct-input{width:100%;min-height:82px;resize:vertical;color:var(--text);background:#12151a;border:1px solid var(--border);border-radius:6px;padding:10px;line-height:1.65}.output-section{border-top:1px solid var(--border);margin-top:16px;padding-top:16px}.output-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}.prompt-output{white-space:pre-wrap;overflow-wrap:anywhere;background:#12151a;border:1px solid #2d333e;border-radius:6px;padding:12px;min-height:95px;line-height:1.7;font-size:13px;user-select:text}.other-output{margin-top:18px}.other-output .prompt-output{min-height:55px}.hint{color:var(--muted);font-size:12px;line-height:1.7;margin:10px 0 0}.library-page .browser-body{min-height:560px;grid-template-columns:190px minmax(0,1fr)}.library-page .library-content{padding:18px}.library-page .block-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr))}.png-layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:18px}.drop-zone{padding:28px 18px;text-align:center;border:1px dashed #6a607c;background:#1e1b28;border-radius:8px;margin:16px;line-height:1.7}.drop-zone.over{border-color:#d1baff;background:#372948}.drop-zone p{margin-bottom:14px}.png-preview{display:block;max-width:100%;max-height:300px;margin:16px auto;object-fit:contain}.png-file-name{padding:0 16px 16px;overflow-wrap:anywhere;color:var(--muted);font-size:12px}.png-results{padding:18px;display:flex;flex-direction:column;gap:18px}.png-text{white-space:pre-wrap;overflow-wrap:anywhere;min-height:95px;background:#12151a;padding:12px;border-radius:6px;border:1px solid var(--border);line-height:1.7;user-select:text;margin-top:9px}.png-error{color:#ffb2b7;padding:0 16px 16px;line-height:1.6}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#373144;color:#f1e9ff;border:1px solid #73638e;border-radius:8px;padding:12px 20px;box-shadow:0 5px 25px #0008;z-index:50;max-width:90vw}dialog{background:#1d2129;border:1px solid #505563;border-radius:10px;color:var(--text);padding:22px;width:min(520px,92vw);max-height:90vh}dialog::backdrop{background:#000a}.dialog-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.dialog-heading button{background:none;border:none;font-size:20px}.dialog-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}.form-field{display:block;margin-bottom:15px;line-height:1.6}.form-field input,.form-field textarea,.form-field select{display:block;width:100%;margin-top:6px;background:#11151b;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:9px}.form-field textarea{min-height:110px;resize:vertical}.error{color:#ffb2b7;font-size:13px;line-height:1.6}.confirm-description{line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.loading{padding:70px;text-align:center;color:var(--muted)}
+.download-link{display:inline-block;color:#e0d4ff;border:1px solid #73638e;background:#352e48;padding:9px 13px;border-radius:6px;text-decoration:none}.download-link:hover{background:#443956}
+@media(min-width:1400px){.browser-body{grid-template-columns:190px minmax(0,1fr)}.tag-grid{gap:7px}}
+@media(max-width:900px){.app-header{padding:15px 18px;flex-wrap:wrap}.header-actions{flex-wrap:wrap}.tabs{padding:0 18px}main{padding:18px}.prompt-layout{grid-template-columns:1fr}.png-layout{grid-template-columns:1fr}.browser-body,.library-page .browser-body{grid-template-columns:145px minmax(0,1fr)}}
+@media(max-width:520px){.brand .muted{font-size:11px}.header-actions{width:100%}#save-status{margin-right:auto}.header-actions button{font-size:12px}.page-heading{align-items:flex-start;flex-direction:column}.browser-body,.library-page .browser-body{grid-template-columns:1fr}.category-nav{border-right:0;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px}.nav-label{width:100%;padding-bottom:3px}.category-row{margin:0;max-width:100%}.category-nav>.add-category{width:auto;margin-top:0}.library-content,.library-page .library-content{padding:12px}.browser-controls{flex-wrap:wrap}.search{flex-basis:100%}.prompt-item{gap:5px;padding:8px 6px}.item-actions button{padding:4px}.block-grid{grid-template-columns:1fr}.tabs{gap:22px}.panel-title{padding:13px}.current-body{padding:12px}}
+/* Quiet library: one creation entry, contextual management. */
+.data-menu{position:relative;font-size:13px}.data-menu summary{cursor:pointer;padding:8px 12px;border:1px solid var(--border);border-radius:6px;list-style:none}.data-menu summary::-webkit-details-marker{display:none}.data-menu summary::after{content:'⌄';margin-left:10px;color:var(--muted)}.data-menu-body{position:absolute;right:0;top:42px;z-index:10;padding:8px;background:var(--panel);border:1px solid var(--border);border-radius:8px;min-width:145px;box-shadow:0 8px 24px #0007}.data-menu-body button{display:block;width:100%;text-align:left;border-color:transparent;background:transparent}.data-menu summary:focus-visible{outline:2px solid var(--accent)}
+.sub-label{padding:0 0 9px}.subcategory-line button{border-color:transparent;background:transparent;color:var(--muted);padding:6px 10px}.subcategory-line button.active{border-color:#55496c}.item-toolbar{min-height:24px;margin-bottom:16px}.breadcrumb{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}.breadcrumb button{padding:0;border:0;background:transparent;font-size:12px;color:var(--muted);text-decoration:underline;text-decoration-color:#505563;text-underline-offset:4px}.breadcrumb button:hover{color:var(--text)}.separator{color:#515866}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:5px}.tag{min-height:32px;min-width:0;background:#20242c;border-color:#333944}.tag>button:first-child{width:100%;padding:6px 8px;display:flex;align-items:center;gap:7px;font-size:12px;line-height:1.45}.select-mark{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:12px;height:12px;border:1px solid #606775;border-radius:3px;font-size:10px;color:#efe8ff}.tag.selected .select-mark{background:#8270bb;border-color:#b8a5ef}.tag.selected,.block.selected{background:#302a40;border-color:#a799ed}.block-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr));gap:10px}.block-main{min-height:95px}.block-main p{font-size:13px}
+.selection-bar{margin-top:18px;padding:14px 16px;background:#252230;border:1px solid #554b6b;border-radius:7px;display:flex;align-items:center;justify-content:space-between;gap:16px}.selection-info{min-width:0}.selection-info strong{font-size:13px;overflow-wrap:anywhere}.selection-info p{color:var(--muted);font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:6px;line-height:1.6}.selection-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}.selection-actions button{font-size:12px}.quiet{background:transparent;border-color:transparent;color:var(--muted)}.detail-path{color:var(--muted);font-size:12px;margin-bottom:18px;overflow-wrap:anywhere}.detail-name{font-size:18px;overflow-wrap:anywhere}.detail-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.7;margin:14px 0 22px;padding:14px;background:#14171c;border-radius:6px}.add-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}.add-choices button{text-align:left;padding:14px}.add-choices strong,.add-choices span{display:block}.add-choices span{color:var(--muted);font-size:12px;margin-top:6px}
+.library-page .browser-body{min-height:560px}.library-page .library-content{padding:20px 24px}.library-page .hint{margin-top:20px;font-size:11px}.library-page .category-nav{padding-top:18px}
+@media(max-width:700px){.selection-bar{align-items:flex-start;flex-direction:column}.selection-actions{flex-shrink:1}.library-page .library-content{padding:16px}.tag-grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}}
+@media(max-width:520px){.tag-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.library-page .block-grid,.block-grid{grid-template-columns:1fr}.library-page .category-nav{padding-top:12px}.add-choices{grid-template-columns:1fr}}
+
+.selection-bar{margin:0 0 14px;position:sticky;top:12px;z-index:2;box-shadow:0 3px 12px #0003}.selection-info p{max-height:90px;overflow:auto}
+
+.library-page{overflow:clip}
+
+/* Persistent cross-category selection, direct editing. */
+.library-page{overflow:visible}.selection-tray{position:sticky;top:0;z-index:8;padding:13px 18px;background:#252230;border-bottom:1px solid #65567f;box-shadow:0 4px 14px #0005}.tray-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}.tray-heading strong{font-size:13px}.tray-heading .count{margin-left:8px}.tray-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;max-height:100px;overflow:auto}.tray-chips .muted{font-size:12px;line-height:1.6}.tray-chip{font-size:12px;padding:4px 8px;background:#393047;border-color:#695984;overflow-wrap:anywhere;max-width:100%}.tray-chip span{color:#d8c7ef;margin-left:5px}.tag>input[type=checkbox]{appearance:auto;accent-color:var(--accent);width:13px;height:13px;margin:0 0 0 8px;flex-shrink:0;cursor:pointer}.tag>button[data-item]{display:flex;align-items:center;flex:1;min-width:0;background:none;border:0;text-align:left;font-size:12px;line-height:1.45;padding:6px 8px;overflow-wrap:anywhere}.tag>button[data-item]:hover{background:#302c3b}.member-list{max-height:150px;overflow:auto;margin-top:8px;border:1px solid var(--border);border-radius:6px;padding:6px}.member-row{display:flex;gap:8px;align-items:center;padding:5px;font-size:12px}.member-row[hidden]{display:none}.form-field .member-row input{width:14px;height:14px;margin:0;accent-color:var(--accent)}.member-row small{display:block;font-size:10px}.dialog-footer{position:sticky;bottom:-22px;background:#1d2129;padding:14px 0 6px;border-top:1px solid var(--border)}#delete-editor{margin-right:auto}.selection-actions{flex-shrink:1}
+@media(max-width:520px){.selection-tray{padding:12px}.tray-heading{flex-wrap:wrap}.tray-chips{max-height:80px}.tray-heading .count{display:inline-block}.tag>input[type=checkbox]{margin-left:6px}}
+
+/* Daily Tag creation and Prompt toggles. */
+.dialog-normal-actions{display:flex;gap:8px;margin-left:auto}.dialog-footer{gap:32px}#delete-editor{margin-right:0}.add-tag{flex-shrink:0;font-size:12px;padding:6px 9px;color:#ddd1ff;background:transparent;border-color:#55496c}.prompt-check{display:inline-flex;justify-content:center;align-items:center;width:13px;height:13px;border:1px solid #616878;border-radius:3px;flex-shrink:0;font-size:10px}.selected .prompt-check{background:#a799ed;border-color:#cdbdff;color:#161320}.block-main strong .prompt-check{vertical-align:middle}.tag.selected>button[data-item]:hover{background:#423653}.side-switch:has([data-side="negative"].active)~*{--accent:var(--negative)}
+
+/* Library: persistent category rail, horizontal subcategories, two independent lists. */
+.library-active{height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.library-active .app-header,.library-active .tabs{flex-shrink:0}
+.library-active main{width:100%;flex:1;min-height:0;display:flex;flex-direction:column;padding:18px 26px}
+.library-active .page-heading{flex-shrink:0;margin-bottom:14px}
+.library-workspace{flex:1;min-height:0;display:flex;flex-direction:column;gap:14px}
+.library-columns{display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;flex:1;min-height:0}
+.classification-panel{display:flex;flex-direction:column;min-height:0}
+.classification-panel .panel-title,.subcategory-panel .panel-title{padding:12px 14px;flex-shrink:0}
+.classification-panel h2,.subcategory-panel h2{font-size:14px}
+.classification-panel .panel-title button,.subcategory-panel .panel-title>button{padding:4px 9px;font-size:18px}
+.classification-list{padding:10px;overflow-y:auto;min-height:0;flex:1;scrollbar-gutter:stable}
+.classification-edit{background:transparent;border:0;color:var(--muted);padding:5px;font-size:11px;flex-shrink:0}
+.classification-edit:hover{color:var(--text)}
+.library-right{display:flex;flex-direction:column;gap:16px;min-width:0;min-height:0}
+.subcategory-panel{flex-shrink:0}
+.subcategory-scroll{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:10px 14px;overscroll-behavior:contain}
+.subcategory-scroll .sub-group{flex-shrink:0;background:#22262e;border-radius:6px}
+.subcategory-scroll [data-sub]{white-space:nowrap;background:transparent;border-color:transparent}
+.subcategory-scroll [data-sub].active{background:#352e48;border-color:#655887;color:#e0d4ff}
+.subcategory-scroll .empty{padding:5px}
+.item-regions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;flex:1;min-height:0}
+.item-region{display:flex;flex-direction:column;min-height:0;min-width:0}
+.item-region .panel-title{background:#1f222a;padding:12px 14px;flex-shrink:0}
+.item-region .panel-title button{padding:5px 8px;font-size:12px;white-space:nowrap}
+.region-content{padding:12px;display:flex;flex-direction:column;flex:1;min-height:0}
+.region-content>.search,.region-content>.hint{flex-shrink:0}
+.region-items{margin-top:12px;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.item-region .tag-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,155px),1fr));gap:4px}
+.item-region .tag{min-height:30px}
+.item-region .block-grid{grid-template-columns:1fr;gap:9px}
+.item-region .block-main{min-height:0;padding:12px}
+.item-region .block-main p{line-height:1.6;font-size:12px}
+.library-workspace>.selection-tray{position:static;flex-shrink:0;border:1px solid #65567f;border-radius:10px;background:#292333;box-shadow:none;padding:12px 16px}
+.library-workspace .tray-chips{max-height:64px}
+.library-workspace .tray-heading{flex-wrap:wrap}
+.library-workspace .selection-actions{flex-wrap:nowrap}
+@media(max-width:900px){.library-columns{grid-template-columns:150px minmax(0,1fr);gap:12px}.library-active main{padding:14px 18px}.item-regions,.library-right{gap:12px}.item-region .panel-title{padding:10px}.item-region .panel-title h2{font-size:13px}.region-content{padding:10px}}
+@media(max-width:600px){.library-active .app-header{min-height:0;padding:10px 12px;gap:8px}.library-active .brand .muted{display:none}.library-active .logo{padding:3px 8px}.library-active .header-actions{width:auto}.library-active #save-status{display:none}.library-active .tabs{padding:0 12px}.library-active .tabs button{padding:10px 2px}.library-active main{padding:10px}.library-active .page-heading{flex-direction:row;align-items:center;gap:6px;margin-bottom:10px}.library-active .page-heading h2{font-size:13px}.library-active .side-switch button{min-width:0;padding:5px 7px;font-size:11px}.library-columns{grid-template-columns:100px minmax(0,1fr);gap:8px}.classification-panel .panel-title{padding:9px 7px;gap:4px}.classification-panel h2{font-size:12px}.classification-list{padding:5px;scrollbar-gutter:auto}.classification-list .category-row{flex-wrap:wrap;gap:0}.classification-list .category-row>button:first-child{flex-basis:100%;padding:6px 4px;font-size:12px}.classification-edit{font-size:10px;padding:3px 5px}.library-right,.item-regions{gap:8px}.subcategory-panel .panel-title{padding:8px}.subcategory-scroll{padding:8px}.item-region .panel-title{flex-wrap:wrap;padding:7px;gap:5px}.region-content{padding:6px}.region-content>.hint{display:none}.region-content>.search{font-size:11px;padding:6px}.item-region .tag-grid{grid-template-columns:1fr}.item-region .tag>button[data-item]{font-size:11px;padding:5px}.item-region .block-main{padding:7px}.item-region .block-main p{font-size:11px}.item-region .block-main strong{font-size:12px}.library-workspace>.selection-tray{padding:9px}.library-workspace .tray-heading{gap:7px}.library-workspace .tray-heading strong{font-size:12px}.library-workspace .tray-chips{max-height:46px;margin-top:7px}.library-workspace{gap:10px}}
+
+.region-content>.search{flex-basis:auto}.classification-panel .panel-title h2{white-space:nowrap}
+@media(max-width:600px){.classification-panel .panel-title{padding:9px 6px}.classification-panel .panel-title button{padding:4px 6px}.classification-panel h2{font-size:11px}}
+
+/* Both modes use the same shelf and the same top workspace dimensions. */
+.shared-workspace{display:flex;flex-direction:column;gap:16px;flex:1;min-height:0}
+.shared-workspace .library-workspace{gap:0}
+.top-workspace{height:132px;min-height:132px;flex-shrink:0;padding:12px 18px;display:flex;flex-direction:column;background:#211f2b;border-color:#514760}
+.library-active .app-header{min-height:72px;padding-top:12px;padding-bottom:12px}
+.subcategory-panel .panel-title{padding:8px 14px}.subcategory-scroll{padding:8px 14px}
+.top-workspace .tray-chips{flex:1;min-height:0;max-height:none;align-content:flex-start;overflow-y:auto;scrollbar-gutter:stable}
+.top-workspace .hint{margin-top:8px;flex-shrink:0}
+.current-chips{list-style:none;margin-bottom:0;padding:0;flex-direction:row;align-items:flex-start}
+.current-chips .prompt-item{max-width:100%;padding:4px 7px;min-height:31px;gap:5px;background:#393047;border-color:#695984}
+.current-chips .prompt-item-content{flex:initial}.current-chips .prompt-item-content strong{font-size:12px}
+.current-chips .item-actions button{padding:2px 4px}.current-chips .muted{font-size:12px}
+.classification-edit{font-size:14px}.region-items .tag-grid{grid-template-columns:1fr}
+.region-items .block-grid{grid-template-columns:1fr}.classification-list,.region-items{scrollbar-gutter:stable;overscroll-behavior:contain}
+[data-side="negative"].active{color:#ffd5d7}body[data-side="negative"]{--accent:var(--negative)}
+.dialog-footer{justify-content:space-between}.dialog-normal-actions{margin-left:auto}
+.classification-panel,.subcategory-panel,.item-region{border-radius:8px}
+.tray-heading{flex-wrap:wrap}.tray-heading .selection-actions{gap:6px}.tray-heading button{font-size:12px}
+@media(max-width:700px){.library-active main{padding:12px}.library-columns{grid-template-columns:125px minmax(0,1fr);gap:10px}.library-right,.item-regions{gap:10px}.top-workspace{padding:12px;height:200px;min-height:200px}.tray-heading{gap:8px}.classification-panel .panel-title,.subcategory-panel .panel-title,.item-region .panel-title{padding:10px}.region-content{padding:8px}}
+@media(max-width:520px){.library-active .app-header{padding:10px 12px;min-height:60px}.library-active .brand .muted{display:none}.library-active .header-actions{width:auto}.library-active #save-status{display:none}.library-columns{grid-template-columns:100px minmax(0,1fr)}.item-regions{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.item-region .panel-title{flex-wrap:wrap;gap:6px}.classification-panel .panel-title{padding:8px 6px}.classification-list{padding:5px}.classification-edit{padding:3px}.category-row>button:first-child{padding:8px 3px}.region-items .tag-grid{grid-template-columns:1fr}.region-items .block-main{padding:8px}.top-workspace{height:210px;min-height:210px}.page-heading{flex-direction:row;align-items:center}.page-heading h2{font-size:14px}.side-switch button{min-width:0;padding:6px}.region-content .search{font-size:12px;min-width:0}.top-workspace .selection-actions{flex-direction:row}.shared-workspace{gap:10px}}
+.prompt-set-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;min-width:0}.prompt-set-bar label{font-size:13px;font-weight:600}.prompt-set-bar select{width:min(360px,60vw);min-width:0;background:#12151a;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:8px}.prompt-set-bar .icon-button{font-size:17px;padding:5px 9px}
+#language{background:var(--raised);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px}.png-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.png-prompt-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}.png-prompt-heading button{font-size:12px}.png-text:focus-visible{outline:2px solid var(--accent)}
+.current-chips .current-direct{flex-basis:100%;min-width:0;padding:9px 11px;border:1px solid var(--border);border-radius:6px;background:#171920;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.65}.current-direct .field-label{margin-bottom:4px}
+.current-workspace{position:relative;padding-bottom:23px}.prompt-resize{position:absolute;bottom:0;left:0;right:0;height:15px;cursor:ns-resize;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}.prompt-resize::after{content:"";width:44px;height:3px;border-radius:3px;background:#73638e}.prompt-resize:hover,.prompt-resize:focus-visible{background:#393047;outline:none}.prompt-resize:focus-visible::after{background:var(--accent)}
+.library-active{height:auto;min-height:100dvh;overflow:visible}.library-active main{flex:none}.shared-workspace,.shared-workspace .library-workspace,.library-columns,.item-regions,.region-content,.region-items{flex:none}.library-columns,.item-regions{align-items:start}.region-items,.classification-list{overflow:visible;overscroll-behavior:auto;scrollbar-gutter:auto}.library-workspace{min-height:0}.item-region .region-items{min-height:40px}
+</style>
+  
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><span class="logo">P</span><div><h1>Prompt Library</h1><span class="muted" data-i18n="自分の部品で、Promptを組み立てる"></span></div></div>
+    <div class="header-actions"><span id="save-status" role="status">読み込み中…</span><select id="language" aria-label="日本語 / English"><option value="ja">日本語</option><option value="en">EN</option></select><details class="data-menu"><summary data-i18n="データ"></summary><div class="data-menu-body"><button id="export" data-i18n="JSON Export">JSON Export</button><button id="import" data-i18n="JSON Import">JSON Import</button><button id="preset-export" data-i18n="現在のPromptをExport">現在のPromptをExport</button><button id="preset-import" data-i18n="Prompt単体をImport">Prompt単体をImport</button></div></details><input id="import-file" type="file" accept="application/json,.json" hidden><input id="preset-import-file" type="file" accept="application/json,.json" hidden></div>
+  </header>
+  <nav class="tabs" aria-label="画面"><button class="active" data-page="prompt" data-i18n="Prompt" aria-current="page">Prompt</button><button data-page="library" data-i18n="Library">Library</button><button data-page="png" data-i18n="PNG Info">PNG Info</button></nav>
+  <main id="main"></main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="editor" aria-labelledby="editor-title"><form id="editor-form"><div class="dialog-heading"><h2 id="editor-title"></h2><button type="button" id="close-editor" aria-label="閉じる">×</button></div><div id="editor-fields"></div><div id="editor-error" class="error" role="alert"></div><div class="dialog-footer"><button type="button" class="danger" id="delete-editor" data-i18n="削除" hidden>削除</button><div class="dialog-normal-actions"><button type="button" id="cancel-editor" data-i18n="キャンセル">キャンセル</button><button type="submit" class="primary" id="submit-editor">保存</button></div></div></form></dialog>
+<script>'use strict';
+(() => {
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const uid = () => crypto.randomUUID();
+  const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  // Translate source-owned UI fragments only; interpolated user values never pass through t().
+  const uiPairs=[
+    ['現在のPromptをExport','Export current prompt'],['Prompt単体をImport','Import one prompt'],
+    ['Prompt単体のExport','Export one prompt'],['Prompt単体のImport','Import one prompt'],
+    ['選択中のPromptセットのPositive / Negative、部品の選択・順序、直接入力の本文を保存します。Libraryは変更しません。','Save the selected prompt set: positive / negative, selected components, order, and direct text. Library is unchanged.'],
+    ['同名のPromptセットがあります。処理を選んでください。','A prompt set with this name exists. Choose an action.'],
+    ['別名で追加','Add with another name'],['上書き対象','Overwrite target'],['上書き','Overwrite'],
+    ['追加する名前','Name for the added prompt'],['Import方法','Import action'],
+    ['この名前はすでに使われています。別の名前を入力してください。','This name is already in use. Enter another name.'],
+    ['PromptセットをImportしました。','Prompt set imported.'],
+    ['単体PromptのExportファイルを選んでください。','Choose a single prompt export file.'],
+    ['Libraryは変更しません。一致する部品は選択状態を復元し、未登録または内容が異なる部品はPrompt内の部品として本文と順序を保持します。','Library is unchanged. Matching components regain their selection; missing or changed components retain their text and order inside the prompt.'],
+    ['Promptセットの上限に達しています。','The prompt set limit has been reached.'],
+    ['自分の部品で、Promptを組み立てる','Build prompts with your own components'],
+    ['JSONの形式が対応していません。Prompt LibraryのExportファイルを選んでください。','Unsupported JSON format. Choose a Prompt Library export file.'],
+    ['共通Library、すべてのPromptセット（Positive / Negative）、選択中のPromptと表示設定をまとめて保存します。','Save the shared library, all prompt sets (positive / negative), the active prompt and preferences.'],
+    ['ダウンロードできない場合は、下の内容をコピーして .json ファイルとして保存できます。','If the download is unavailable, copy the content below and save it as a .json file.'],
+    [' 件のPromptセットを読み込みます。現在のLibraryとすべてのPromptセットは置き換わります。必要なデータは先にJSON Exportしてください。',' prompt sets will be imported. The current library and all prompt sets will be replaced. Export a backup first if needed.'],
+    ['」のPositive / NegativeをPNGの本文で置き換えます。現在の部品と直接入力は置き換わります。','”: replace positive / negative with the PNG prompt text. Current components and direct text will be replaced.'],
+    ['」のPositive / Negativeを削除します。Libraryは保持します。','”: delete its positive / negative prompt. The library is kept.'],
+    ['」と配下のすべてのサブカテゴリ・Tag・Blockを削除します。Current Promptの追加済み部品は残ります。','” and all its subcategories, tags and blocks will be deleted. Current prompt components are kept.'],
+    ['」と配下のすべてのTag・Blockを削除します。Current Promptの追加済み部品は残ります。','” and all its tags and blocks will be deleted. Current prompt components are kept.'],
+    ['全文を直接編集できます。変更して更新すると、Tag／Blockの選択を解除し、編集後の全文を保存します。','Edit the complete text. Updating changed text clears tag / block selections and saves the edited prompt.'],
+    ['チェックを変更するとPrompt内容を選択中Tagから生成します。生成後の直接編集も可能です。','Changing the checkboxes generates prompt text from the selected tags. You can then edit it directly.'],
+    ['タグを選ぶと既存の本文に追加します。解除すると一致するタグ本文だけを取り除きます。直接編集した部分は保持します。','Selecting a tag adds it to the existing text. Deselecting removes only its matching text. Other directly edited text is kept.'],
+    ['Automatic1111 / Forge系の parameters を読み取ります。ファイルはサーバーに送信されません。','Reads Automatic1111 / Forge parameters. Files stay in your browser.'],
+    ['Block用Tag選択をONにして、棚からTagを選んでください。','Turn on tag selection for blocks, then select tags from the shelf.'],
+    ['Tagクリックで選択／解除 · 分類を移動しても選択を保持します。','Click tags to select / deselect. Selection persists across categories.'],
+    ['Tag／Blockクリックで直接編集します。','Click a tag or block to edit it.'],
+    ['下のTag／Blockをクリックして追加・解除します。','Click tags / blocks below to add or remove them.'],
+    ['ドラッグまたは ↑ ↓ で並べ替え · ','Drag or use ↑ ↓ to reorder · '],
+    ['保存失敗・JSON Exportで退避してください','Save failed — export JSON to back up your data'],
+    ['保存できませんでした。JSON Exportでデータを退避してください。','Could not save. Export JSON to back up your data.'],
+    ['保存データを読み込めませんでした。自動上書きは行いません。','Could not load saved data. It will not be overwritten automatically.'],
+    ['保存データを読み込めませんでした','Could not load saved data'],
+    ['ブラウザ内に保存済み','Saved in browser'],['ブラウザ内保存を利用できません','Browser storage is unavailable'],
+    ['移行前バックアップを保存できませんでした','Could not save the pre-migration backup'],['保存が中断されました','Saving was interrupted'],
+    ['最後のPromptセットは削除できません。','The last prompt set cannot be deleted.'],
+    ['Prompt名は200文字までです。','Prompt names can contain up to 200 characters.'],
+    ['Promptセットの名前変更・削除','Rename / delete prompt set'],['Promptセットを新規作成','New prompt set'],
+    ['Promptセットの管理','Manage prompt set'],['Promptセットを削除','Delete prompt set'],
+    ['名前変更・削除','Rename / delete'],['Promptセット','Prompt set'],['Prompt名','Prompt name'],
+    ['選択したTagからBlockを作成','Create a block from selected tags'],
+    ['Block用Tag選択 ','Select tags for blocks '],['Blockにする','Create block'],
+    ['Library全体のTagを検索','Search tags across the library'],['含まれるTag','Included tags'],
+    ['TagのPrompt内容','Tag prompt text'],['Block名','Block name'],['Prompt内容','Prompt text'],
+    ['追加した部品と直接追記を消去します。','Clear selected components and direct text.'],
+    ['サブカテゴリ一覧・横スクロール','Subcategory list — horizontal scroll'],
+    ['サブカテゴリを選択してください。','Choose a subcategory.'],['カテゴリを選択してください','Choose a category'],
+    ['＋でサブカテゴリを追加','Use + to add a subcategory'],['＋でカテゴリを追加','Use + to add a category'],
+    ['サブカテゴリを追加','Add subcategory'],['カテゴリを追加','Add category'],
+    ['サブカテゴリを削除','Delete subcategory'],['カテゴリを削除','Delete category'],
+    ['サブカテゴリ編集','Edit subcategory'],['サブカテゴリ追加','Add subcategory'],['サブカテゴリ削除','Delete subcategory'],
+    ['カテゴリ編集','Edit category'],['カテゴリ追加','Add category'],['カテゴリ削除','Delete category'],
+    ['サブカテゴリ名','Subcategory name'],['カテゴリ名','Category name'],['サブカテゴリ','Subcategory'],['カテゴリ','Category'],
+    ['該当する部品がありません。','No matching components.'],
+    ['選択部分をLibraryへ','Selection to Library'],['選択部分をLibraryに追加しました。','Selection added to the library.'],
+    ['Libraryでカテゴリとサブカテゴリを作成してください。','Create a category and subcategory in the Library.'],
+    ['Prompt本文から登録する文字列を選択してください。','Select text from a prompt to add it.'],
+    ['PNGのPromptを送信しました。','PNG prompt sent.'],
+    ['Prompt本文を送信 · 選択部分をLibraryへ登録','Send prompt text · add selected text to the library'],
+    ['PNGファイル','PNG file'],['PNGをここへ','Drop a PNG here'],['ドラッグ＆ドロップ','Drag & drop'],
+    ['ファイルを選択','Choose file'],['選択したPNGのプレビュー','Preview of selected PNG'],['PNGを解析中…','Reading PNG…'],
+    ['このブラウザでは圧縮されたPNGテキストを展開できません。','This browser cannot decompress PNG text.'],
+    ['PNGのテキスト情報が大きすぎます。','PNG text metadata is too large.'],
+    ['PNG形式のファイルを選択してください。','Choose a PNG file.'],['PNGのデータが途中で切れています。','PNG data is truncated.'],
+    ['PNGのテキスト形式を読み取れませんでした。','Could not read PNG text metadata.'],['未対応のPNG圧縮方式です。','Unsupported PNG compression method.'],
+    ['iTXt形式が不正です。','Invalid iTXt metadata.'],['PNGの終端データを確認できませんでした。','PNG end marker was not found.'],
+    ['PNGは100MBまで読み込めます。','PNG files must be 100 MB or smaller.'],
+    ['parametersは読み取れましたが、Generation Infoの区切りを特定できませんでした。','Parameters were read, but the generation settings separator was not found.'],
+    ['parametersが見つかりませんでした。','No parameters metadata was found.'],
+    ['ImportできるJSONは30MBまでです。','JSON imports must be 30 MB or smaller.'],
+    ['JSONをImportしました。','JSON imported.'],['JSONを読み取れませんでした。ファイル内容を確認してください。','Could not read JSON. Check the file content.'],
+    ['置き換えてImport','Replace and import'],['JSONファイルをダウンロード','Download JSON file'],
+    ['保存先を選択してください。','Choose a destination.'],['空白のみの入力は保存できません。','Text containing only whitespace cannot be saved.'],
+    ['選択テキストが長すぎます。選択範囲を短くしてください。','The selected text is too long. Select a shorter section.'],
+    ['コピーするテキスト','Text to copy'],['を手動コピー',' — manual copy'],['をコピーしました。',' copied.'],['は空です。',' is empty.'],
+    ['Libraryを読み込み中…','Loading library…'],['読み込み中…','Loading…'],['保存中…','Saving…'],
+    ['直接編集したPromptあり · ','Includes direct prompt text · '],['完成Prompt','Complete prompt'],['選択トレイ','Selection tray'],
+    ['直接入力の本文','Direct prompt text'],
+    ['送信先：','Target: '],['現在のプロンプト枠の高さを変更','Resize the current prompt panel'],['ドラッグで高さを変更・上下キーでも調整できます','Drag to resize, or use the up / down arrow keys'],
+    ['選択解除','Clear selection'],['を選択解除',' — deselect'],['を上へ',' — move up'],['を下へ',' — move down'],
+    ['を削除しました。',' deleted.'],['を削除',' — delete'],['をクリア',' — clear'],['を編集',' — edit'],['を検索',' — search'],['の名称変更・削除',' — rename / delete'],
+    [' 配下',' — subcategories'],[' 件の部品・',' components and '],[' 件',' items'],[' 部品',' components'],
+    ['追加種別','Item type'],['保存先','Destination'],['キャンセル','Cancel'],['閉じる','Close'],['クリア','Clear'],['置き換え','Replace'],
+    ['編集','Edit'],['追加','Add'],['更新','Update'],['作成','Create'],['削除','Delete'],['保存','Save'],['画面','Pages'],['データ','Data'],['「','“'],['」','”']
+  ];
+  const jaLabels={'Prompt':'プロンプト','Library':'ライブラリ','PNG Info':'PNG情報','Positive':'ポジティブ','Negative':'ネガティブ','Category':'カテゴリ','Subcategory':'サブカテゴリ','Tags':'タグ','Blocks':'ブロック','Tag':'タグ','Block':'ブロック','Current Prompt':'現在のプロンプト','Copy Prompt':'プロンプトをコピー','Generation Info':'生成情報','JSON Export':'JSONエクスポート','JSON Import':'JSONインポート','Send to Prompt':'プロンプトへ送信'};
+  let language=(()=>{try{const stored=localStorage.getItem('prompt-library-language');if(['ja','en'].includes(stored))return stored;}catch{}return navigator.language?.toLowerCase().startsWith('ja')?'ja':'en';})();
+  const enMap=new Map(uiPairs),enPattern=new RegExp(uiPairs.map(p=>p[0]).sort((a,b)=>b.length-a.length).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
+  function t(text){
+    if(language==='en')return String(text).replace(enPattern,match=>enMap.get(match));
+    // English labels appear as entire values or static text between HTML tags.
+    return String(text).replace(/Current Prompt|Copy Prompt|Send to Prompt|Generation Info|JSON Export|JSON Import|PNG Info|Subcategory|Category|Positive|Negative|Library|Prompts?|Tags?|Blocks?/g,match=>jaLabels[match]||match);
+  }
+  function L(strings,...values){return strings.reduce((out,part,index)=>out+t(part)+(index<values.length?values[index]:''),'');}
+  function setLanguage(next,save=true){
+    if(!['ja','en'].includes(next))return;language=next;
+    try{localStorage.setItem('prompt-library-language',language);}catch{}
+    if(state){state.settings.language=language;if(save)persist();}
+    $('#toast').hidden=true;
+    localizeStatic();
+  }
+
+  const sides = ['positive', 'negative'];
+  const sideName = side => side === 'positive' ? t('Positive') : t('Negative');
+  let db, state, page = 'prompt', activeSide = 'positive', selected = new Set();
+  const selectionModes={positive:false,negative:false};
+  const shelfScroll={positive:{},negative:{}};
+  const selections = {positive:selected,negative:new Set()};
+  const allTags = () => state.library[activeSide].flatMap(c=>c.subcategories.flatMap(s=>s.items.filter(i=>i.type==='tag').map(i=>({...i,category:c.name,subcategory:s.name}))));
+  const selectedTags = () => {const tags=new Map(allTags().map(i=>[i.id,i]));return [...selected].map(id=>tags.get(id)).filter(Boolean);};
+  let dialogSubmit, toastTimer, saveChain = Promise.resolve(), saveVersion = 0, dragId = null;
+  const view = {positive:{category:null,sub:null,type:'tag',search:''},negative:{category:null,sub:null,type:'tag',search:''}};
+  let png = {name:'',url:'',positive:'',negative:'',info:'',error:'',loading:false};
+  let pngVersion = 0;
+  function currentSet() {return state.promptSets.find(p=>p.id===state.activePromptId);}
+  function currentPrompts() {return currentSet().prompts;}
+  function promptSetHTML() {
+    return L`<div class="prompt-set-bar"><label for="prompt-set">Prompt</label><select id="prompt-set" aria-label="Promptセット">${state.promptSets.map(p=>L`<option value="${p.id}" ${p.id===state.activePromptId?'selected':''}>${escape(p.name)}</option>`).join('')}</select><button data-action="new-prompt" aria-label="Promptセットを新規作成" title="Promptセットを新規作成">＋</button><button class="icon-button" data-action="manage-prompt" aria-label="Promptセットの名前変更・削除" title="名前変更・削除">⚙</button></div>`;
+  }
+  function validateData(data) {
+    if(data?.version===1){
+      const legacy=validateLegacy(data),id=uid();
+      return {version:2,library:legacy.library,promptSets:[{id,name:'既存Prompt',prompts:legacy.prompts}],activePromptId:id,settings:{activeSide:'positive'}};
+    }
+    const fail=()=>{throw new Error(t('JSONの形式が対応していません。Prompt LibraryのExportファイルを選んでください。'));};
+    if(!data||data.version!==2||!Array.isArray(data.promptSets)||!data.promptSets.length||data.promptSets.length>10000)fail();
+    const ids=new Set();let library;
+    const promptSets=data.promptSets.map(p=>{
+      if(!p||typeof p.id!=='string'||p.id.length>200||!/^[a-zA-Z0-9_-]+$/.test(p.id)||ids.has(p.id)||typeof p.name!=='string'||!p.name.trim()||p.name.length>200)fail();
+      ids.add(p.id);
+      const clean=validateLegacy({version:1,library:data.library,prompts:p.prompts});
+      library??=clean.library;
+      return {id:p.id,name:p.name,prompts:clean.prompts};
+    });
+    if(!ids.has(data.activePromptId)||!data.settings||!sides.includes(data.settings.activeSide))fail();
+    return {version:2,library,promptSets,activePromptId:data.activePromptId,settings:{activeSide:data.settings.activeSide,...(['ja','en'].includes(data.settings.language)?{language:data.settings.language}:{})}};
+  }
+  function editPromptSet(create=false) {
+    const p=currentSet();
+    showDialog(create?t('Promptセットを新規作成'):t('Promptセットの管理'),field('name',t('Prompt名'),create?'':p.name),form=>{
+      const name=trimField(form,'name');
+      if(name.length>200)throw new Error(t('Prompt名は200文字までです。'));
+      if(create){const next={id:uid(),name,prompts:{positive:{items:[],direct:''},negative:{items:[],direct:''}}};state.promptSets.push(next);state.activePromptId=next.id;}
+      else p.name=name;
+      persist();render();
+    },create?t('作成'):t('更新'));
+    if(!create){
+      $('#delete-editor').hidden=false;$('#delete-editor').disabled=state.promptSets.length===1;
+      $('#delete-editor').title=state.promptSets.length===1?t('最後のPromptセットは削除できません。'):'';
+      $('#delete-editor').onclick=()=>{
+        $('#editor').close();confirmDelete(t('Promptセットを削除'),L`「${p.name}」のPositive / Negativeを削除します。Libraryは保持します。`,()=>{
+          if(state.promptSets.length===1)return;
+          state.promptSets=state.promptSets.filter(s=>s.id!==p.id);state.activePromptId=state.promptSets[0].id;
+        });
+      };
+    }
+  }
+  function seed() {
+    const category = (name, groups) => ({id:uid(),name,subcategories:groups.map(([name,tags,blocks=[]])=>({id:uid(),name,items:[...tags.map(text=>({id:uid(),type:'tag',name:text,text})),...blocks.map(([name,text])=>({id:uid(),type:'block',name,text}))]}))});
+    const initial = {version:1,library:{positive:[
+      category('構図',[
+        ['視点',['from above','from below','front view','side view','back view','foreshortening','perspective'],[['強い俯瞰','from above, foreshortening, perspective']]],
+        ['画角',['close-up','upper body','full body','face focus'],[['顔アップ','close-up, face focus']]]
+      ]),
+      category('ポーズ・表情',[
+        ['姿勢',['standing','sitting','lying','sitting on desk','legs dangling'],[['机に座る','sitting on desk, legs dangling']]],
+        ['視線・表情',['looking at viewer','looking away','eyes closed','smile']]
+      ]),
+      category('背景・画作り',[
+        ['場所',['indoors','outdoors','simple background']],
+        ['描写',['depth of field','soft lighting']]
+      ]),
+      category('キャラ',[['基本',['1girl','solo']],['Fate',['artoria pendragon (fate)']]])
+    ],negative:[category('品質',[['基本',['low quality','blurry','bad anatomy','extra fingers'],[['基本除外','low quality, blurry, bad anatomy']]]])]},
+    prompts:{positive:{items:[],direct:''},negative:{items:[],direct:''}}};
+    const fresh=validateData(initial);fresh.promptSets[0].name='新規プロンプト';return fresh;
+  }
+  async function openDB() {
+    return new Promise((resolve,reject)=>{const request=indexedDB.open('prompt-library',1);request.onupgradeneeded=()=>request.result.createObjectStore('data');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+  }
+  function readDB() {return new Promise((resolve,reject)=>{const tx=db.transaction('data','readonly');const request=tx.objectStore('data').get('state');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});}
+  function persist() {
+    state.settings.activeSide=activeSide;state.settings.language=language;
+    const snapshot=structuredClone(state), revision=++saveVersion;
+    $('#save-status').textContent=t('保存中…');
+    saveChain=saveChain.catch(()=>{}).then(()=>new Promise((resolve,reject)=>{if(!db){reject(new Error(t('ブラウザ内保存を利用できません')));return;}const tx=db.transaction('data','readwrite');tx.objectStore('data').put(snapshot,'state');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error(t('保存が中断されました')));}));
+    saveChain.then(()=>{if(revision===saveVersion)$('#save-status').textContent=t('ブラウザ内に保存済み');},()=>{if(revision===saveVersion){$('#save-status').textContent=t('保存失敗・JSON Exportで退避してください');toast(t('保存できませんでした。JSON Exportでデータを退避してください。'));}});
+    return saveChain;
+  }
+  function toast(message) {clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;toastTimer=setTimeout(()=>$('#toast').hidden=true,3500);}
+  function currentView() {
+    const v=view[activeSide], categories=state.library[activeSide];
+    let cat=categories.find(c=>c.id===v.category)||categories[0];v.category=cat?.id||null;
+    let sub=cat?.subcategories.find(s=>s.id===v.sub)||cat?.subcategories[0];v.sub=sub?.id||null;
+    return {v,categories,cat,sub};
+  }
+  function isPromptSelected(id) {return currentPrompts()[activeSide].items.some(i=>i.sourceId===id);}
+  function togglePrompt(item) {
+    const p=currentPrompts()[activeSide];
+    if(isPromptSelected(item.id))p.items=p.items.filter(i=>i.sourceId!==item.id);
+    else p.items.push({...item,id:uid(),sourceId:item.id});
+    persist();render();
+  }
+  function finalPrompt(side) {const p=currentPrompts()[side];return [...p.items.map(item=>item.text.trim()),p.direct.trim()].filter(Boolean).join(', ');}
+  function switchHTML() {return L`<div class="side-switch" aria-label="Positive / Negative"><button data-side="positive" class="${activeSide==='positive'?'active':''}" aria-pressed="${activeSide==='positive'}">Positive</button><button data-side="negative" class="negative ${activeSide==='negative'?'active':''}" aria-pressed="${activeSide==='negative'}">Negative</button></div>`;}
+  function browserHTML(manage) {return libraryHTML(manage);}
+
+  function trayHTML(chosen) {
+    const mode=selectionModes[activeSide];
+    return L`<section class="top-workspace panel" aria-label="選択トレイ"><div class="tray-heading"><strong>選択トレイ <span class="count">${sideName(activeSide)} · ${chosen.length} Tags</span></strong><div class="selection-actions"><button data-action="selection-mode" aria-pressed="${mode}" class="${mode?'primary':''}">Block用Tag選択 ${mode?'ON':'OFF'}</button><button data-action="clear-selection" ${chosen.length?'':'disabled'}>選択解除</button><button class="primary" data-action="make-block" ${chosen.length?'':'disabled'}>Blockにする</button></div></div><div class="tray-chips">${chosen.length?chosen.map(i=>L`<button class="tray-chip" data-unselect="${i.id}" aria-label="${escape(i.text)}を選択解除" title="${escape(i.category+' / '+i.subcategory)}">${escape(i.text)} <span aria-hidden="true">×</span></button>`).join(''):t('<span class="muted">Block用Tag選択をONにして、棚からTagを選んでください。</span>')}</div><p class="hint">${mode?t('Tagクリックで選択／解除 · 分類を移動しても選択を保持します。'):t('Tag／Blockクリックで直接編集します。')}</p></section>`;
+  }
+
+  function itemsHTML(items,manage,type) {
+    if(!items.length)return t('<div class="empty">該当する部品がありません。</div>');
+    const selectable=!manage||(type==='tag'&&selectionModes[activeSide]);
+    const pressed=i=>selectable&&(manage?selected.has(i.id):isPromptSelected(i.id));
+    const attrs=i=>selectable?' aria-pressed="'+pressed(i)+'"':' title="'+(type==='tag'?t('Tag'):t('Block'))+t('を編集"');
+    const check=i=>selectable?'<span class="prompt-check" aria-hidden="true">'+(pressed(i)?'✓':'')+'</span> ':'';
+    if(type==='tag')return '<div class="tag-grid">'+items.map(i=>'<div class="tag '+(pressed(i)?'selected':'')+'"><button data-item="'+i.id+'"'+attrs(i)+'>'+check(i)+escape(i.text)+'</button></div>').join('')+'</div>';
+    return '<div class="block-grid">'+items.map(i=>'<article class="block '+(pressed(i)?'selected':'')+'"><button class="block-main" data-item="'+i.id+'"'+attrs(i)+'><strong>'+check(i)+escape(i.name)+'</strong><p>'+escape(i.text)+'</p></button></article>').join('')+'</div>';
+  }
+
+  function libraryHTML(manage) {
+    const {categories,cat,sub}=currentView();
+    const region=(type,label)=>{
+      const query=view[activeSide][type+'Search']||'';
+      const items=(sub?.items||[]).filter(i=>i.type===type && L`${i.name} ${i.text}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+      return L`<section class="panel item-region" aria-label="${label}"><div class="panel-title"><h2>${label} <span class="count">${items.length} 件</span></h2><button data-action="add-${type}" ${sub?'':'disabled'}>＋ ${type==='tag'?t('Tag'):t('Block')}</button></div><div class="region-content"><input class="search" data-region-search="${type}" aria-label="${label}を検索" placeholder="${label}を検索" value="${escape(query)}"><div class="region-items" tabindex="0" data-scroll="${type}:${sub?.id||'none'}">${itemsHTML(items,manage,type)}</div>${!sub?t('<p class="hint">サブカテゴリを選択してください。</p>'):''}</div></section>`;
+    };
+    return L`<div class="library-workspace"><div class="library-columns">
+      <section class="panel classification-panel" aria-label="カテゴリ"><div class="panel-title"><h2>Category</h2><button data-action="add-category" aria-label="カテゴリを追加">＋</button></div><div class="classification-list" tabindex="0" data-scroll="categories">${categories.map(c=>L`<div class="category-row"><button data-category="${c.id}" class="${cat?.id===c.id?'active':''}" aria-pressed="${cat?.id===c.id}">${escape(c.name)}</button><button class="classification-edit" data-edit-category="${c.id}" aria-label="${escape(c.name)}の名称変更・削除">✎</button></div>`).join('')||t('<p class="empty">＋でカテゴリを追加</p>')}</div></section>
+      <div class="library-right"><section class="panel subcategory-panel" aria-label="サブカテゴリ"><div class="panel-title"><div><h2>Subcategory</h2><p>${cat?escape(cat.name)+t(' 配下'):t('カテゴリを選択してください')}</p></div><button data-action="add-sub" aria-label="サブカテゴリを追加" ${cat?'':'disabled'}>＋</button></div><div class="subcategory-scroll" data-scroll="subcategories:${cat?.id||'none'}" tabindex="0" aria-label="サブカテゴリ一覧・横スクロール">${(cat?.subcategories||[]).map(s=>L`<div class="sub-group"><button data-sub="${s.id}" class="${sub?.id===s.id?'active':''}" aria-pressed="${sub?.id===s.id}">${escape(s.name)}</button><button class="classification-edit" data-edit-sub="${s.id}" aria-label="${escape(s.name)}の名称変更・削除">✎</button></div>`).join('')||t('<p class="empty">＋でサブカテゴリを追加</p>')}</div></section>
+      <div class="item-regions">${region('tag',t('Tags'))}${region('block',t('Blocks'))}</div></div>
+    </div></div>`;
+  }
+
+  function currentHTML() {
+    const p=currentPrompts()[activeSide],other=activeSide==='positive'?'negative':'positive';
+    return L`<section class="top-workspace panel current-workspace" id="current-prompt-panel" aria-label="Current Prompt"><div class="tray-heading"><strong>Current Prompt <span class="count">${sideName(activeSide)} · ${p.items.length} 部品</span></strong><div class="selection-actions"><button data-action="prompt-detail">完成Prompt</button><button data-action="clear-prompt" ${p.items.length||p.direct?'':'disabled'}>クリア</button><button class="primary" data-copy="${activeSide}">Copy Prompt</button></div></div><ol class="tray-chips current-chips">${p.items.map((i,index)=>L`<li class="prompt-item" draggable="true" data-prompt-id="${i.id}" title="${escape(i.text)}"><span class="drag-handle" aria-hidden="true">⠿</span><span class="prompt-item-content"><strong>${escape(i.name)}</strong></span><div class="item-actions"><button data-move="${i.id}" data-direction="-1" ${index===0?'disabled':''} aria-label="${escape(i.name)}を上へ">↑</button><button data-move="${i.id}" data-direction="1" ${index===p.items.length-1?'disabled':''} aria-label="${escape(i.name)}を下へ">↓</button><button data-remove="${i.id}" aria-label="${escape(i.name)}を削除">×</button></div></li>`).join('')+(p.direct?t('<li class="current-direct"><span class="field-label">直接入力の本文</span><div>')+escape(p.direct)+'</div></li>':(!p.items.length?t('<li class="muted">下のTag／Blockをクリックして追加・解除します。</li>'):''))}</ol><p class="hint">${p.direct?t('直接編集したPromptあり · '):''}ドラッグまたは ↑ ↓ で並べ替え · ${sideName(other)}: ${currentPrompts()[other].items.length} 部品</p><div id="prompt-resize" class="prompt-resize" role="separator" tabindex="0" aria-orientation="horizontal" aria-label="現在のプロンプト枠の高さを変更" title="ドラッグで高さを変更・上下キーでも調整できます" aria-controls="current-prompt-panel"></div></section>`;
+  }
+
+  function pngHTML() {
+    return L`<div class="page-heading"><h2>PNG Info</h2><span class="muted">Prompt本文を送信 · 選択部分をLibraryへ登録</span></div><div class="png-layout"><section class="panel"><div class="panel-title"><h2>PNGファイル</h2></div><div class="drop-zone" id="drop-zone"><p>PNGをここへ<br>ドラッグ＆ドロップ</p><button id="choose-png">ファイルを選択</button><input type="file" id="png-file" accept="image/png,.png" hidden></div>${png.url?L`<img class="png-preview" src="${escape(png.url)}" alt="選択したPNGのプレビュー">`:''}<div class="png-file-name">${escape(png.name)}</div>${png.error?L`<div class="png-error" role="alert">${escape(png.error)}</div>`:''}<p class="hint" style="padding:0 16px 16px">Automatic1111 / Forge系の parameters を読み取ります。ファイルはサーバーに送信されません。</p></section><section class="panel png-results"><div class="png-actions"><button id="send-prompt" class="primary" ${!png.loading&&(png.positive||png.negative)?'':'disabled'}>Send to Prompt</button><span class="muted" id="png-prompt-target">送信先：${escape(currentSet().name)}</span></div>${png.loading?t('<p role="status">PNGを解析中…</p>'):''}<div><div class="png-prompt-heading"><h3>Positive</h3><button data-png-library="positive" disabled>選択部分をLibraryへ</button></div><div class="png-text" id="png-positive" tabindex="0" aria-label="Positive Prompt">${escape(png.positive)}</div></div><div><div class="png-prompt-heading"><h3>Negative</h3><button data-png-library="negative" disabled>選択部分をLibraryへ</button></div><div class="png-text" id="png-negative" tabindex="0" aria-label="Negative Prompt">${escape(png.negative)}</div></div><div><h3>Generation Info</h3><div class="png-text" id="png-info">${escape(png.info)}</div></div></section></div>`;
+  }
+  function render(resetItems=false) {
+    const previousSide=document.body.dataset.side;
+    if(previousSide)document.querySelectorAll('[data-scroll]').forEach(el=>{shelfScroll[previousSide][el.dataset.scroll]=[el.scrollTop,el.scrollLeft];});
+    const focus=document.activeElement, focusId=focus?.dataset.item||focus?.dataset.unselect;
+    document.querySelectorAll('[data-page]').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);if(b.dataset.page===page)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+    document.body.classList.toggle('library-active',page!=='png');
+    document.body.dataset.side=activeSide;
+    $('#main').innerHTML=page==='png'?pngHTML():L`<div class="page-heading"><h2>${page==='prompt'?t('Prompt'):t('Library')} / ${sideName(activeSide)}</h2>${switchHTML()}</div>${page==='prompt'?promptSetHTML():''}<div class="shared-workspace">${page==='prompt'?currentHTML():trayHTML(selectedTags())}${browserHTML(page==='library')}</div>`;
+    localizeStatic();bindMain();bindPromptResize();
+    document.querySelectorAll('[data-scroll]').forEach(el=>{
+      const key=el.dataset.scroll,positions=shelfScroll[activeSide][key];
+      if(positions){el.scrollTop=positions[0];el.scrollLeft=positions[1];}
+      el.onscroll=()=>{shelfScroll[activeSide][key]=[el.scrollTop,el.scrollLeft];};
+    });
+    if(focusId)document.querySelector('[data-item="'+focusId+'"], [data-unselect="'+focusId+'"]')?.focus({preventScroll:true});
+  }
+
+  function bindMain() {
+    const root=$('#main');
+    root.onclick=event=>{
+      const b=event.target.closest('button');if(!b)return;
+      const d=b.dataset;
+      if(d.side){activeSide=d.side;selected=selections[activeSide];persist();render();}
+      else if(d.category){view[activeSide].category=d.category;view[activeSide].sub=null;view[activeSide].search='';view[activeSide].tagSearch='';view[activeSide].blockSearch='';render(true);}
+      else if(d.sub){view[activeSide].sub=d.sub;view[activeSide].search='';view[activeSide].tagSearch='';view[activeSide].blockSearch='';render(true);}
+      else if(d.type){view[activeSide].type=d.type;render();}
+      else if(d.editCategory)editCategory(d.editCategory);
+      else if(d.editSub)editSub(d.editSub);
+      else if(d.unselect){selected.delete(d.unselect);render();}
+      else if(d.item){const i=currentView().sub?.items.find(i=>i.id===d.item);if(!i)return;if(page==='library'){if(i.type==='tag'&&selectionModes[activeSide]){selected.has(i.id)?selected.delete(i.id):selected.add(i.id);render();}else editItem(i.id);}else{togglePrompt(i);}}
+      else if(d.remove){const p=currentPrompts()[activeSide];p.items=p.items.filter(i=>i.id!==d.remove);persist();render();}
+      else if(d.move){const list=currentPrompts()[activeSide].items;const from=list.findIndex(i=>i.id===d.move),to=from+Number(d.direction);if(to>=0&&to<list.length){[list[from],list[to]]=[list[to],list[from]];persist();render();}}
+      else if(d.copy)copyPrompt(d.copy);
+      else if(d.action)runAction(d.action);
+      else if(d.pngLibrary)sendSelectionToLibrary(d.pngLibrary);
+      else if(b.id==='send-prompt')sendPNGToPrompt();
+      else if(b.id==='choose-png')$('#png-file').click();
+    };
+    root.onchange=event=>{if(event.target.id==='prompt-set'){const id=event.target.value;if(state.promptSets.some(p=>p.id===id)&&id!==state.activePromptId){persist();state.activePromptId=id;dragId=null;persist();render();}return;}const id=event.target.dataset.select;if(id){event.target.checked?selected.add(id):selected.delete(id);render();}};
+    const search=$('#library-search');if(search)search.oninput=()=>{view[activeSide].search=search.value;const caret=search.selectionStart;render();$('#library-search').focus();$('#library-search').setSelectionRange(caret,caret);};
+    root.querySelectorAll('[data-region-search]').forEach(input=>input.oninput=()=>{const type=input.dataset.regionSearch,caret=input.selectionStart;view[activeSide][type+'Search']=input.value;render();const next=root.querySelector('[data-region-search="'+type+'"]');next.focus();next.setSelectionRange(caret,caret);});
+    const direct=$('#direct-input');if(direct)direct.oninput=()=>{currentPrompts()[activeSide].direct=direct.value;$('#active-output').textContent=finalPrompt(activeSide);$('[data-action="clear-prompt"]').disabled=!currentPrompts()[activeSide].items.length&&!direct.value;persist();};
+    root.ondragstart=event=>{const row=event.target.closest('[data-prompt-id]');if(!row)return;dragId=row.dataset.promptId;event.dataTransfer.setData('text/plain',dragId);event.dataTransfer.effectAllowed='move';row.classList.add('dragging');};
+    root.ondragend=()=>{dragId=null;root.querySelectorAll('.dragging,.drag-over').forEach(r=>r.classList.remove('dragging','drag-over'));};
+    root.ondragover=event=>{const row=event.target.closest('[data-prompt-id]');if(row&&dragId){event.preventDefault();event.dataTransfer.dropEffect='move';row.classList.add('drag-over');}};
+    root.ondragleave=event=>event.target.closest('[data-prompt-id]')?.classList.remove('drag-over');
+    root.ondrop=event=>{const row=event.target.closest('[data-prompt-id]');if(!row||!dragId)return;event.preventDefault();const list=currentPrompts()[activeSide].items,from=list.findIndex(i=>i.id===dragId),to=list.findIndex(i=>i.id===row.dataset.promptId);if(from>=0&&to>=0&&from!==to){list.splice(to,0,list.splice(from,1)[0]);persist();render();}dragId=null;};
+    const input=$('#png-file');if(input)input.onchange=()=>{if(input.files[0])loadPNG(input.files[0]);};
+    const drop=$('#drop-zone');if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add('over');};drop.ondragleave=()=>drop.classList.remove('over');drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])loadPNG(e.dataTransfer.files[0]);};}
+  }
+  function field(name,label,value='',multiline=false) {return L`<div class="form-field"><label for="field-${name}">${label}</label>${multiline?L`<textarea id="field-${name}" name="${name}" required>${escape(value)}</textarea>`:L`<input id="field-${name}" name="${name}" value="${escape(value)}" required maxlength="${name==='name'?200:10000}">`}</div>`;}
+  function showDialog(title,fields,onSubmit,button=t('保存')) {
+    $('#delete-editor').hidden=true;$('#delete-editor').disabled=false;$('#delete-editor').title='';$('#delete-editor').onclick=null;$('#editor-title').textContent=title;$('#editor-fields').innerHTML=fields;$('#editor-error').textContent='';$('#submit-editor').textContent=button;$('#cancel-editor').hidden=button===t('閉じる');$('#submit-editor').className=button===t('削除')?'danger':'primary';dialogSubmit=onSubmit;localizeStatic();$('#editor').showModal();
+  }
+  function confirmDelete(title,description,onDelete) {showDialog(title,L`<p class="confirm-description">${escape(description)}</p>`,()=>{onDelete();persist();render();},t('削除'));}
+  function trimField(form,name) {const value=new FormData(form).get(name)?.toString().trim();if(!value)throw new Error(t('空白のみの入力は保存できません。'));return value;}
+  function runAction(action) {
+    const {cat,sub,v}=currentView();
+    if(action==='new-prompt')editPromptSet(true);
+    if(action==='manage-prompt')editPromptSet();
+    if(action==='selection-mode'){selectionModes[activeSide]=!selectionModes[activeSide];render();}
+    if(action==='prompt-detail'){const p=currentPrompts()[activeSide],original=finalPrompt(activeSide);showDialog(sideName(activeSide)+t(' 完成Prompt'),field('prompt',t('完成Prompt'),original,true)+t('<p class="hint">全文を直接編集できます。変更して更新すると、Tag／Blockの選択を解除し、編集後の全文を保存します。</p>'),form=>{const edited=new FormData(form).get('prompt').toString().trim();if(edited!==original){p.items=[];p.direct=edited;persist();render();}},t('更新'));$('#field-prompt').required=false;}
+    if(action==='add-block'&&sub)editItem(undefined,'block');
+    if(action==='add-tag'&&sub)editItem(undefined,'tag');
+    if(action==='add-category')showDialog(t('カテゴリ追加'),field('name',t('カテゴリ名')),form=>{const name=trimField(form,'name'),c={id:uid(),name,subcategories:[]};state.library[activeSide].push(c);v.category=c.id;v.sub=null;persist();render();});
+    if(action==='add-sub'&&cat)showDialog(t('サブカテゴリ追加'),field('name',t('サブカテゴリ名')),form=>{const name=trimField(form,'name'),s={id:uid(),name,items:[]};cat.subcategories.push(s);v.sub=s.id;persist();render();});
+    if(action==='make-block'){const chosen=selectedTags();if(!chosen.length)return;
+      const options=state.library[activeSide].flatMap(c=>c.subcategories.map(s=>'<option value="'+s.id+'" '+(s.id===sub?.id?'selected':'')+'>'+escape(c.name+' / '+s.name)+'</option>')).join('');
+      showDialog(t('選択したTagからBlockを作成'),field('name',t('Block名'))+t('<div class="form-field"><label for="block-destination">保存先</label><select id="block-destination" name="destination" required>')+options+t('</select></div><p class="hint">含まれるTag: ')+chosen.map(i=>escape(i.text)).join(' / ')+'</p>'+field('text',t('Prompt内容'),chosen.map(i=>i.text).join(', '),true),form=>{const name=trimField(form,'name'),text=trimField(form,'text'),destination=new FormData(form).get('destination');const c=state.library[activeSide].find(c=>c.subcategories.some(s=>s.id===destination)),target=c?.subcategories.find(s=>s.id===destination);if(!target)throw new Error(t('保存先を選択してください。'));target.items.push({id:uid(),type:'block',name,text,tagIds:chosen.map(i=>i.id)});selected.clear();v.category=c.id;v.sub=target.id;v.type='block';persist();render();},t('作成'));}
+    if(action==='clear-selection'){selected.clear();render();}
+    if(action==='clear-prompt')showDialog(L`${sideName(activeSide)}をクリア`,L`<p class="confirm-description">追加した部品と直接追記を消去します。</p>`,()=>{currentPrompts()[activeSide]={items:[],direct:''};persist();render();},t('クリア'));
+  }
+  function editCategory(id) {
+    const cat=state.library[activeSide].find(c=>c.id===id);if(!cat)return;
+    showDialog(t('カテゴリ編集'),field('name',t('カテゴリ名'),cat.name)+L`<button type="button" class="danger" id="delete-category">カテゴリを削除</button>`,form=>{cat.name=trimField(form,'name');persist();render();},t('更新'));
+    $('#delete-category').onclick=()=>{$('#editor').close();confirmDelete(t('カテゴリ削除'),L`「${cat.name}」と配下のすべてのサブカテゴリ・Tag・Blockを削除します。Current Promptの追加済み部品は残ります。`,()=>{state.library[activeSide]=state.library[activeSide].filter(c=>c.id!==id);});};
+  }
+  function editSub(id) {
+    const cat=currentView().cat,sub=cat?.subcategories.find(s=>s.id===id);if(!sub)return;
+    showDialog(t('サブカテゴリ編集'),field('name',t('サブカテゴリ名'),sub.name)+L`<button type="button" class="danger" id="delete-sub">サブカテゴリを削除</button>`,form=>{sub.name=trimField(form,'name');persist();render();},t('更新'));
+    $('#delete-sub').onclick=()=>{$('#editor').close();confirmDelete(t('サブカテゴリ削除'),L`「${sub.name}」と配下のすべてのTag・Blockを削除します。Current Promptの追加済み部品は残ります。`,()=>{cat.subcategories=cat.subcategories.filter(s=>s.id!==id);});};
+  }
+  function editItem(id,addType) {
+    const {sub,v}=currentView();if(!sub)return;const item=sub.items.find(i=>i.id===id),type=item?.type||addType||v.type;
+    const tags=allTags();const members=new Set((item?.tagIds||[]).filter(id=>tags.some(t=>t.id===id)));
+    const tagFields=type==='block'?t('<div class="form-field"><label for="member-search">含まれるTag</label><input id="member-search" placeholder="Library全体のTagを検索"><div class="member-list">')+tags.map(t=>'<label class="member-row"><input type="checkbox" name="members" value="'+t.id+'" '+(members.has(t.id)?'checked':'')+'><span>'+escape(t.text)+'<small>'+escape(t.category+' / '+t.subcategory)+'</small></span></label>').join('')+t('</div><p class="hint">タグを選ぶと既存の本文に追加します。解除すると一致するタグ本文だけを取り除きます。直接編集した部分は保持します。</p></div>'):'';
+    showDialog(L`${type==='tag'?t('Tag'):t('Block')} ${item?t('編集'):t('追加')}`,(type==='block'?field('name',t('Block名'),item?.name||''):'')+tagFields+field('text',type==='tag'?t('TagのPrompt内容'):t('Prompt内容'),item?.text||'',type==='block'),form=>{const text=trimField(form,'text'),name=type==='block'?trimField(form,'name'):text;const values={name,text};if(type==='block')values.tagIds=new FormData(form).getAll('members');if(item)Object.assign(item,values);else {sub.items.push({id:uid(),type,...values});v.type=type;}persist();render();},item?t('更新'):t('追加'));
+    if(type==='block'){
+      $('#member-search').oninput=event=>{const query=event.target.value.toLocaleLowerCase();document.querySelectorAll('.member-row').forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(query));};
+      document.querySelectorAll('[name="members"]').forEach(check=>check.onchange=()=>{check.checked?members.add(check.value):members.delete(check.value);const tag=tags.find(t=>t.id===check.value);if(tag)$('#field-text').value=updateBlockTagText($('#field-text').value,tag.text,check.checked);});
+    }
+    if(item){$('#delete-editor').hidden=false;$('#delete-editor').onclick=()=>{sub.items=sub.items.filter(i=>i.id!==id);selected.delete(id);for(const c of state.library[activeSide])for(const s of c.subcategories)for(const i of s.items)if(i.tagIds)i.tagIds=i.tagIds.filter(t=>t!==id);persist();$('#editor').close();render();toast((type==='tag'?t('Tag'):t('Block'))+t('を削除しました。'));};}
+  }
+  async function copyPrompt(side) {
+    const text=finalPrompt(side);if(!text){toast(L`${sideName(side)}は空です。`);return;}
+    try {await navigator.clipboard.writeText(text);toast(L`${sideName(side)}をコピーしました。`);}
+    catch {const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.left='-10000px';document.body.append(temp);temp.select();let ok=false;try{ok=document.execCommand('copy');}catch{}temp.remove();if(ok)toast(L`${sideName(side)}をコピーしました。`);else showDialog(L`${sideName(side)}を手動コピー`,L`<label class="form-field">コピーするテキスト<textarea readonly>${escape(text)}</textarea></label>`,()=>{},t('閉じる'));}
+  }
+  function validateLegacy(data) {
+    const fail=()=>{throw new Error(t('JSONの形式が対応していません。Prompt LibraryのExportファイルを選んでください。'));};
+    if(!data||data.version!==1||!data.library||!data.prompts)fail();
+    const ids=new Set();let itemCount=0;
+    const validString=(s,max=100000)=>typeof s==='string'&&s.length<=max;
+    const identifier=id=>{if(!validString(id,200)||!/^[a-zA-Z0-9_-]+$/.test(id)||ids.has(id))fail();ids.add(id);return id;};
+    const name=n=>{if(!validString(n,10000)||!n.trim())fail();return n;};
+    const item=i=>{if(!i||!['tag','block'].includes(i.type)||!validString(i.text)||!i.text.trim())fail();if(++itemCount>100000)fail();if(i.tagIds!==undefined&&(!Array.isArray(i.tagIds)||i.tagIds.length>100000||i.tagIds.some(id=>!validString(id,200)||!/^[a-zA-Z0-9_-]+$/.test(id))))fail();return {id:identifier(i.id),type:i.type,name:name(i.name),text:i.text,...(i.type==='block'&&i.tagIds?{tagIds:[...new Set(i.tagIds)]}:{})};};
+    const clean={version:1,library:{},prompts:{}};
+    for(const side of sides){
+      if(!Array.isArray(data.library[side])||data.library[side].length>10000)fail();
+      clean.library[side]=data.library[side].map(c=>{if(!c||!Array.isArray(c.subcategories)||c.subcategories.length>10000)fail();return {id:identifier(c.id),name:name(c.name),subcategories:c.subcategories.map(s=>{if(!s||!Array.isArray(s.items))fail();return {id:identifier(s.id),name:name(s.name),items:s.items.map(item)};})};});
+      const p=data.prompts[side];if(!p||!Array.isArray(p.items)||!validString(p.direct))fail();clean.prompts[side]={items:p.items.map(item),direct:p.direct};
+    }
+    for(const side of sides){
+      const libraryItems=clean.library[side].flatMap(c=>c.subcategories.flatMap(s=>s.items));
+      const sourceById=new Map(libraryItems.map(i=>[i.id,i]));
+      for(const block of libraryItems.filter(i=>i.type==='block'&&i.tagIds===undefined)){
+        const matches=block.text.split(', ').map(text=>libraryItems.filter(i=>i.type==='tag'&&i.text===text));
+        if(matches.every(group=>group.length===1))block.tagIds=matches.map(group=>group[0].id);
+      }
+      const seen=new Set();
+      clean.prompts[side].items=clean.prompts[side].items.filter((i,index)=>{
+        const raw=data.prompts[side].items[index];
+        if(raw.sourceId!==undefined){
+          if(!validString(raw.sourceId,200)||!/^[a-zA-Z0-9_-]+$/.test(raw.sourceId))fail();
+          if(sourceById.get(raw.sourceId)?.type===i.type)i.sourceId=raw.sourceId;
+        }else{
+          const matches=libraryItems.filter(source=>source.type===i.type&&source.name===i.name&&source.text===i.text);
+          if(matches.length===1)i.sourceId=matches[0].id;
+        }
+        if(!i.sourceId)return true;
+        if(seen.has(i.sourceId))return false;
+        seen.add(i.sourceId);return true;
+      });
+    }
+    return clean;
+  }
+  // Include only reference context needed to validate and safely reconnect components.
+  // This context is never merged into or written to the destination Library.
+  function presetBackup() {
+    const promptSet=structuredClone(currentSet()),library={};
+    for(const side of sides){
+      const needed=new Set(promptSet.prompts[side].items.flatMap(i=>[i.sourceId,...(i.tagIds||[])].filter(Boolean)));
+      const source=state.library[side].flatMap(c=>c.subcategories.flatMap(s=>s.items));
+      for(const item of source)if(needed.has(item.id))for(const id of item.tagIds||[])needed.add(id);
+      library[side]=state.library[side].map(c=>({...c,subcategories:c.subcategories.map(s=>({...s,items:s.items.filter(i=>needed.has(i.id))})).filter(s=>s.items.length)})).filter(c=>c.subcategories.length);
+    }
+    return {format:'prompt-library-preset',version:1,promptSet,library};
+  }
+  function exportPreset() {
+    const backup=presetBackup(),json=JSON.stringify(backup,null,2),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    const name=backup.promptSet.name.replace(/[<>:"/\\|?*\x00-\x1f]/g,'_').slice(0,100)||'prompt';
+    showDialog(t('Prompt単体のExport'),L`<p class="confirm-description">選択中のPromptセットのPositive / Negative、部品の選択・順序、直接入力の本文を保存します。Libraryは変更しません。</p><p style="margin:16px 0"><a class="download-link" id="download-json" href="${url}" download="prompt-${escape(name)}.json">JSONファイルをダウンロード</a></p><label class="field-label" for="export-json">ダウンロードできない場合は、下の内容をコピーして .json ファイルとして保存できます。</label><textarea class="direct-input" id="export-json" readonly>${escape(json)}</textarea>`,()=>{},t('閉じる'));
+    $('#editor').addEventListener('close',()=>URL.revokeObjectURL(url),{once:true});
+  }
+  function validatePreset(data) {
+    if(!data||data.format!=='prompt-library-preset'||data.version!==1||!data.promptSet)throw new Error(t('単体PromptのExportファイルを選んでください。'));
+    return validateData({version:2,library:data.library,promptSets:[data.promptSet],activePromptId:data.promptSet.id,settings:{activeSide:'positive'}}).promptSets[0];
+  }
+  function reconnectPreset(imported,referenceLibrary) {
+    const result=structuredClone(imported);
+    for(const side of sides){
+      const local=state.library[side].flatMap(c=>c.subcategories.flatMap(s=>s.items));
+      const references=referenceLibrary[side].flatMap(c=>c.subcategories.flatMap(s=>s.items));
+      const same=(a,b)=>a&&b&&a.type===b.type&&a.name===b.name&&a.text===b.text;
+      const match=reference=>{
+        const byId=local.find(i=>i.id===reference?.id);
+        if(same(byId,reference))return byId;
+        const candidates=local.filter(i=>same(i,reference));
+        return candidates.length===1?candidates[0]:null;
+      };
+      const seen=new Set();
+      result.prompts[side].items=result.prompts[side].items.map(item=>{
+        const next={...item,id:uid()};
+        const reference=references.find(i=>i.id===item.sourceId);
+        const target=reference&&same(reference,item)?match(reference):null;
+        delete next.sourceId;
+        if(target&&!seen.has(target.id)){next.sourceId=target.id;seen.add(target.id);}
+        if(next.tagIds)next.tagIds=next.tagIds.map(id=>match(references.find(i=>i.id===id))?.id).filter(Boolean);
+        return next;
+      });
+    }
+    return result;
+  }
+  async function importPreset(file) {
+    try{
+      if(file.size>30*1024*1024)throw new Error(t('ImportできるJSONは30MBまでです。'));
+      const backup=JSON.parse(await file.text()),imported=validatePreset(backup);
+      const conflicts=state.promptSets.filter(p=>p.name===imported.name);
+      let suggested=imported.name;
+      if(conflicts.length){let n=2;while(state.promptSets.some(p=>p.name===suggested))suggested=imported.name.slice(0,190)+' ('+(n++)+')';}
+      const fields=L`<p class="confirm-description">${escape(file.name)}\nLibraryは変更しません。一致する部品は選択状態を復元し、未登録または内容が異なる部品はPrompt内の部品として本文と順序を保持します。</p>`+
+        (conflicts.length?L`<p class="hint">同名のPromptセットがあります。処理を選んでください。</p><div class="form-field"><label for="preset-mode">Import方法</label><select id="preset-mode" name="mode"><option value="add">別名で追加</option><option value="overwrite">上書き</option></select></div><div class="form-field" id="preset-target-field" hidden><label for="preset-target">上書き対象</label><select id="preset-target" name="target">${conflicts.map(p=>L`<option value="${p.id}">${escape(p.name)} (${escape(p.id.slice(0,8))})</option>`).join('')}</select></div>`:'')+
+        '<div id="preset-name-field">'+field('name',t('追加する名前'),suggested)+'</div>';
+      showDialog(t('Prompt単体のImport'),fields,form=>{
+        const values=new FormData(form),overwrite=values.get('mode')==='overwrite';
+        const target=overwrite?state.promptSets.find(p=>p.id===values.get('target')&&p.name===imported.name):null;
+        if(overwrite&&!target)throw new Error(t('保存先を選択してください。'));
+        const name=overwrite?target.name:trimField(form,'name');
+        if(name.length>200)throw new Error(t('Prompt名は200文字までです。'));
+        if(!overwrite&&state.promptSets.some(p=>p.name===name))throw new Error(t('この名前はすでに使われています。別の名前を入力してください。'));
+        if(!overwrite&&state.promptSets.length>=10000)throw new Error(t('Promptセットの上限に達しています。'));
+        const next=reconnectPreset(imported,backup.library);next.id=target?target.id:uid();next.name=name;
+        // Validate the candidate before mutating state. Keep all unrelated sets and Library.
+        const promptSets=target?state.promptSets.map(p=>p.id===target.id?next:p):[...state.promptSets,next];
+        validateData({...state,promptSets,activePromptId:next.id});
+        state.promptSets=promptSets;state.activePromptId=next.id;dragId=null;persist();render();toast(t('PromptセットをImportしました。'));
+      },t('Import'));
+      const mode=$('#preset-mode');
+      if(mode)mode.onchange=()=>{const overwrite=mode.value==='overwrite';$('#preset-name-field').hidden=overwrite;$('#field-name').disabled=overwrite;$('#preset-target-field').hidden=!overwrite;$('#submit-editor').textContent=overwrite?t('上書き'):t('Import');};
+    }catch(error){toast(error instanceof SyntaxError?t('JSONを読み取れませんでした。ファイル内容を確認してください。'):error.message);}
+    finally{$('#preset-import-file').value='';}
+  }
+
+  function downloadJSON() {
+    const json=JSON.stringify(state,null,2),url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    showDialog(t('JSON Export'),L`<p class="confirm-description">共通Library、すべてのPromptセット（Positive / Negative）、選択中のPromptと表示設定をまとめて保存します。</p><p style="margin:16px 0"><a class="download-link" id="download-json" href="${url}" download="prompt-library-${new Date().toISOString().slice(0,10)}.json">JSONファイルをダウンロード</a></p><label class="field-label" for="export-json">ダウンロードできない場合は、下の内容をコピーして .json ファイルとして保存できます。</label><textarea class="direct-input" id="export-json" readonly>${escape(json)}</textarea>`,()=>{},t('閉じる'));
+    $('#editor').addEventListener('close',()=>URL.revokeObjectURL(url),{once:true});
+  }
+  async function importJSON(file) {
+    try {if(file.size>30*1024*1024)throw new Error(t('ImportできるJSONは30MBまでです。'));const imported=validateData(JSON.parse(await file.text()));const count=sides.reduce((n,side)=>n+imported.library[side].reduce((n,c)=>n+c.subcategories.reduce((n,s)=>n+s.items.length,0),0),0);
+      showDialog(t('JSON Import'),L`<p class="confirm-description">${escape(file.name)}\n${count} 件の部品・${imported.promptSets.length} 件のPromptセットを読み込みます。現在のLibraryとすべてのPromptセットは置き換わります。必要なデータは先にJSON Exportしてください。</p>`,()=>{state=imported;if(state.settings.language)setLanguage(state.settings.language,false);else state.settings.language=language;activeSide=state.settings.activeSide;selected=selections[activeSide];shelfScroll.positive={};shelfScroll.negative={};selections.positive.clear();selections.negative.clear();for(const side of sides)view[side]={category:null,sub:null,type:'tag',search:''};persist();render();toast(t('JSONをImportしました。'));},t('置き換えてImport'));
+    }catch(error){toast(error instanceof SyntaxError?t('JSONを読み取れませんでした。ファイル内容を確認してください。'):error.message);}
+    finally{$('#import-file').value='';}
+  }
+  const decode=new TextDecoder('utf-8');
+  const latin=bytes=>Array.from(bytes,b=>String.fromCharCode(b)).join('');
+  async function inflate(bytes) {
+    if(typeof DecompressionStream==='undefined')throw new Error(t('このブラウザでは圧縮されたPNGテキストを展開できません。'));
+    const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate')).getReader();const chunks=[];let size=0;
+    try{while(true){const {value,done}=await reader.read();if(done)break;size+=value.length;if(size>8*1024*1024){await reader.cancel();throw new Error(t('PNGのテキスト情報が大きすぎます。'));}chunks.push(value);}}finally{reader.releaseLock();}
+    const result=new Uint8Array(size);let offset=0;for(const c of chunks){result.set(c,offset);offset+=c.length;}return result;
+  }
+  async function readPNG(buffer) {
+    const bytes=new Uint8Array(buffer),header=[137,80,78,71,13,10,26,10];
+    if(bytes.length<20||!header.every((n,i)=>bytes[i]===n))throw new Error(t('PNG形式のファイルを選択してください。'));
+    const dv=new DataView(buffer),metadata=[],warnings=[];let pos=8,ended=false;
+    while(pos+12<=bytes.length){const length=dv.getUint32(pos),type=latin(bytes.subarray(pos+4,pos+8)),end=pos+12+length;if(end>bytes.length)throw new Error(t('PNGのデータが途中で切れています。'));
+      const chunk=bytes.subarray(pos+8,pos+8+length);
+      if(['tEXt','zTXt','iTXt'].includes(type)){
+        try{if(length>8*1024*1024)throw new Error(t('PNGのテキスト情報が大きすぎます。'));const zero=chunk.indexOf(0);if(zero<1||zero>79)throw new Error(t('PNGのテキスト形式を読み取れませんでした。'));const key=latin(chunk.subarray(0,zero));let text;
+          if(type==='tEXt')text=latin(chunk.subarray(zero+1));
+          else if(type==='zTXt'){if(chunk[zero+1]!==0)throw new Error(t('未対応のPNG圧縮方式です。'));text=latin(await inflate(chunk.subarray(zero+2)));}
+          else{const flag=chunk[zero+1],method=chunk[zero+2];let start=zero+3;const languageEnd=chunk.indexOf(0,start);if(languageEnd<0)throw new Error(t('iTXt形式が不正です。'));start=languageEnd+1;const translatedEnd=chunk.indexOf(0,start);if(translatedEnd<0||![0,1].includes(flag)||method!==0)throw new Error(t('iTXt形式が不正です。'));const content=chunk.subarray(translatedEnd+1);text=decode.decode(flag===1?await inflate(content):content);}
+          metadata.push({key,text});
+        }catch(error){warnings.push(error.message);}
+      }
+      pos=end;if(type==='IEND'){ended=true;break;}
+    }
+    if(!ended)throw new Error(t('PNGの終端データを確認できませんでした。'));
+    return {metadata,warnings};
+  }
+  function splitParameters(text) {
+    // Generation settings begin on their own line in A1111 / Forge infotext.
+    const normalized=text.replace(/\r\n?/g,'\n');
+    const settings=/(?:^|\n)(Steps:\s*\d+[^\n]*)/g;let match,settingsAt=-1;
+    while((match=settings.exec(normalized))!==null){if(/(?:Sampler|Seed|Size|CFG scale):/.test(match[1]))settingsAt=match.index+(normalized[match.index]==='\n'?1:0);}
+    const promptText=settingsAt>=0?normalized.slice(0,settingsAt).trimEnd():normalized;
+    const neg=/(?:^|\n)Negative prompt:\s?/.exec(promptText);
+    return {positive:(neg?promptText.slice(0,neg.index):promptText).trim(),negative:neg?promptText.slice(neg.index+neg[0].length).trim():'',info:settingsAt>=0?normalized.slice(settingsAt).trim():''};
+  }
+  async function loadPNG(file) {
+    const revision=++pngVersion;if(png.url)URL.revokeObjectURL(png.url);png={name:file.name,url:'',positive:'',negative:'',info:'',error:'',loading:true};render();
+    try{if(file.size>100*1024*1024)throw new Error(t('PNGは100MBまで読み込めます。'));const {metadata,warnings}=await readPNG(await file.arrayBuffer());if(revision!==pngVersion)return;
+      png.url=URL.createObjectURL(file);const parameters=metadata.find(m=>m.key.toLowerCase()==='parameters');
+      if(parameters){Object.assign(png,splitParameters(parameters.text));if(!png.info)png.error=t('parametersは読み取れましたが、Generation Infoの区切りを特定できませんでした。');}
+      else {png.error=t('parametersが見つかりませんでした。');png.info=metadata.map(m=>L`${m.key}\n${m.text}`).join('\n\n');}
+      if(warnings.length)png.error=[png.error,...warnings].filter(Boolean).join('\n');
+    }catch(error){if(revision===pngVersion)png.error=error.message;}
+    finally{if(revision===pngVersion){png.loading=false;if(page==='png')render();}}
+  }
+  document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>{page=b.dataset.page;render();});
+  $('#close-editor').onclick=$('#cancel-editor').onclick=()=>$('#editor').close();
+  $('#editor-form').onsubmit=event=>{event.preventDefault();try{dialogSubmit(event.target);$('#editor').close();}catch(error){$('#editor-error').textContent=error.message;}};
+  $('#export').onclick=()=>{$('.data-menu').open=false;downloadJSON();};$('#import').onclick=()=>{$('.data-menu').open=false;$('#import-file').click();};$('#import-file').onchange=()=>{if($('#import-file').files[0])importJSON($('#import-file').files[0]);};
+  $('#preset-export').onclick=()=>{$('.data-menu').open=false;exportPreset();};
+  $('#preset-import').onclick=()=>{$('.data-menu').open=false;$('#preset-import-file').click();};
+  $('#preset-import-file').onchange=()=>{const file=$('#preset-import-file').files[0];if(file)importPreset(file);};
+  async function init() {
+    $('#main').innerHTML=t('<div class="loading">Libraryを読み込み中…</div>');
+    try{db=await openDB();const saved=await readDB();state=saved?validateData(saved):seed();if(state.settings.language)setLanguage(state.settings.language,false);activeSide=state.settings.activeSide;selected=selections[activeSide];render();
+      if(saved?.version===1){await new Promise((resolve,reject)=>{const tx=db.transaction('data','readwrite');tx.objectStore('data').put(saved,'legacy-state-v1');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error(t('移行前バックアップを保存できませんでした')));});await persist();}
+      else if(!saved)persist();else $('#save-status').textContent=t('ブラウザ内に保存済み');}
+    catch(error){state=seed();render();$('#save-status').textContent=t('保存データを読み込めませんでした');toast(t('保存データを読み込めませんでした。自動上書きは行いません。'));db=null;}
+  }
+  let pngSelection=null;
+  let currentPromptHeight=(()=>{try{const value=Number(localStorage.getItem('prompt-library-current-height'));return Number.isFinite(value)&&value>0?value:null;}catch{return null;}})();
+  function bindPromptResize(){
+    const panel=$('#current-prompt-panel'),handle=$('#prompt-resize');if(!panel||!handle)return;
+    const limits=()=>{const min=window.innerWidth<=700?210:132;return {min,max:Math.max(min,window.innerHeight-Math.max(0,panel.getBoundingClientRect().top)-156)};};
+    const resize=(height,save=false)=>{
+      const {min,max}=limits(),next=Math.max(min,Math.min(max,height));
+      panel.style.minHeight=min+'px';panel.style.height=next+'px';
+      handle.setAttribute('aria-valuemin',min);handle.setAttribute('aria-valuemax',max);handle.setAttribute('aria-valuenow',Math.round(next));
+      if(save){currentPromptHeight=next;try{localStorage.setItem('prompt-library-current-height',String(next));}catch{}}
+    };
+    resize(currentPromptHeight??panel.getBoundingClientRect().height);
+    handle.onpointerdown=event=>{
+      if(event.button!==0)return;event.preventDefault();handle.focus({preventScroll:true});handle.setPointerCapture(event.pointerId);
+      const startY=event.clientY,startHeight=panel.getBoundingClientRect().height;
+      handle.onpointermove=move=>{if(move.pointerId===event.pointerId)resize(startHeight+move.clientY-startY);};
+      const finish=end=>{if(end.pointerId!==event.pointerId)return;resize(panel.getBoundingClientRect().height,true);handle.onpointermove=null;handle.onpointerup=null;handle.onpointercancel=null;};
+      handle.onpointerup=finish;handle.onpointercancel=finish;
+    };
+    handle.onkeydown=event=>{
+      const {min,max}=limits();let next=panel.getBoundingClientRect().height;
+      if(event.key==='ArrowUp')next-=20;else if(event.key==='ArrowDown')next+=20;else if(event.key==='Home')next=min;else if(event.key==='End')next=max;else return;
+      event.preventDefault();resize(next,true);
+    };
+  }
+  window.addEventListener('resize',()=>bindPromptResize());
+  function updateBlockTagText(text,tag,checked){
+    // Match the literal tag between comma separators; retain every other text segment.
+    let start=0,match=null;
+    while(start<=text.length){
+      const at=text.indexOf(tag,start);if(at<0)break;
+      const left=/(?:^|,)\s*$/.exec(text.slice(0,at)),right=/^\s*(?:,|$)/.exec(text.slice(at+tag.length));
+      if(left&&right){match={at,left,right};break;}start=at+1;
+    }
+    if(checked)return match?text:text+(text.trim()?', ':'')+tag;
+    if(!match)return text;
+    const {at,left,right}=match,end=at+tag.length;
+    if(right[0].includes(','))return text.slice(0,at)+text.slice(end+right[0].length).replace(/^\s*/,'');
+    if(left[0].includes(','))return text.slice(0,left.index)+text.slice(end);
+    return text.slice(0,at)+text.slice(end);
+  }
+  document.addEventListener('selectionchange',()=>{
+    if(page!=='png')return;
+    const selection=window.getSelection();pngSelection=null;
+    if(selection&&!selection.isCollapsed&&selection.rangeCount){
+      const range=selection.getRangeAt(0);
+      for(const side of sides){const el=$('#png-'+side);if(el&&el.contains(range.startContainer)&&el.contains(range.endContainer)&&selection.toString().trim())pngSelection={side,text:selection.toString(),revision:pngVersion};}
+    }
+    document.querySelectorAll('[data-png-library]').forEach(b=>b.disabled=pngSelection?.side!==b.dataset.pngLibrary);
+  });
+  // Preserve the observed range when a button receives focus (including touch).
+  document.addEventListener('pointerdown',event=>{if(event.target.closest('[data-png-library]'))event.preventDefault();});
+  function sendPNGToPrompt(){
+    if(png.loading||(!png.positive&&!png.negative))return;
+    const target=currentSet(), payload={positive:png.positive,negative:png.negative};
+    const apply=()=>{
+      for(const side of sides)target.prompts[side]={items:[],direct:payload[side]};
+      page='prompt';activeSide=payload.positive?'positive':'negative';selected=selections[activeSide];persist();render();toast(t('PNGのPromptを送信しました。'));
+    };
+    if(sides.some(side=>target.prompts[side].items.length||target.prompts[side].direct)){
+      showDialog(t('Send to Prompt'),L`<p class="confirm-description">「${escape(target.name)}」のPositive / NegativeをPNGの本文で置き換えます。現在の部品と直接入力は置き換わります。</p>`,apply,t('置き換え'));
+    }else apply();
+  }
+  function sendSelectionToLibrary(side){
+    const captured=pngSelection;
+    if(!captured||captured.side!==side||captured.revision!==pngVersion){toast(t('Prompt本文から登録する文字列を選択してください。'));return;}
+    const categories=state.library[side];
+    const options=categories.map(c=>L`<option value="${c.id}">${escape(c.name)}</option>`).join('');
+    showDialog(t('選択部分をLibraryへ'),L`<div class="form-field"><label for="png-target-side">Library</label><select id="png-target-side" disabled><option>${sideName(side)}</option></select></div><div class="form-field"><label for="png-kind">追加種別</label><select id="png-kind" name="kind"><option value="tag">Tag</option><option value="block">Block</option></select></div><div class="form-field"><label for="png-category">Category</label><select id="png-category" name="category" required>${options}</select></div><div class="form-field"><label for="png-subcategory">Subcategory</label><select id="png-subcategory" name="subcategory" required></select></div><div id="png-block-name" hidden>${field('name',t('Block名'))}</div>${field('text',t('Prompt内容'),captured.text,true)}<p class="hint" id="png-destination-hint" hidden>Libraryでカテゴリとサブカテゴリを作成してください。</p>`,form=>{
+      const values=new FormData(form),kind=values.get('kind'),text=values.get('text').toString();
+      if(!text.trim())throw new Error(t('空白のみの入力は保存できません。'));
+      if(text.length>(kind==='tag'?10000:100000))throw new Error(t('選択テキストが長すぎます。選択範囲を短くしてください。'));
+      const category=categories.find(c=>c.id===values.get('category')),sub=category?.subcategories.find(s=>s.id===values.get('subcategory'));
+      if(!sub)throw new Error(t('保存先を選択してください。'));
+      const name=kind==='block'?trimField(form,'name'):text;
+      sub.items.push({id:uid(),type:kind,name,text,...(kind==='block'?{tagIds:[]}:{})});
+      persist();toast(t('選択部分をLibraryに追加しました。'));
+    },t('追加'));
+    const cat=$('#png-category'),sub=$('#png-subcategory');
+    const syncSub=()=>{const c=categories.find(c=>c.id===cat.value);sub.innerHTML=(c?.subcategories||[]).map(s=>L`<option value="${s.id}">${escape(s.name)}</option>`).join('');$('#submit-editor').disabled=!sub.options.length;$('#png-destination-hint').hidden=!!sub.options.length;};
+    cat.value=view[side].category||categories[0]?.id||'';if(!cat.value&&categories.length)cat.value=categories[0].id;syncSub();
+    if([...sub.options].some(o=>o.value===view[side].sub))sub.value=view[side].sub;
+    cat.onchange=syncSub;
+    $('#field-name').disabled=true;
+    $('#png-kind').onchange=()=>{const block=$('#png-kind').value==='block';$('#png-block-name').hidden=!block;$('#field-name').disabled=!block;};
+  }
+  $('#language').onchange=()=>{setLanguage($('#language').value);render();};
+  // Header controls remain outside the re-rendered workspace.
+  function localizeStatic(){
+    document.documentElement.lang=language;
+    document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+    $('#language').value=language;$('#close-editor').setAttribute('aria-label',t('閉じる'));
+    $('.tabs').setAttribute('aria-label',t('画面'));
+    $('#submit-editor').disabled=false;
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
