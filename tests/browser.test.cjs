@@ -1,0 +1,44 @@
+const {chromium}=require('playwright');
+const fs=require('fs'),http=require('http'),assert=require('assert/strict');
+(async()=>{
+ const server=http.createServer((req,res)=>{res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fs.readFileSync(require('path').join(__dirname,'../index.html')));});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const browser=await chromium.launch({headless:true,channel:'chrome'});
+ try{
+ const context=await browser.newContext({locale:'ja-JP',permissions:['clipboard-read','clipboard-write']});
+ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('http://127.0.0.1:'+server.address().port);await page.waitForSelector('[data-item]');
+ await page.locator('[data-page="library"]').click();
+ await page.locator('[data-action="add-block"]').click();
+ await page.locator('#field-name').fill('怒っている');await page.locator('#field-text').fill('angry,\nfrown,\nfurrowed brow,');await page.locator('#submit-editor').click();
+ const read=()=>page.evaluate(()=>new Promise((resolve,reject)=>{const open=indexedDB.open('prompt-library',1);open.onsuccess=()=>{const db=open.result,req=db.transaction('data','readonly').objectStore('data').get('state');req.onsuccess=()=>{db.close();resolve(req.result);};req.onerror=reject;};}));
+ await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='ブラウザ内に保存済み');
+ let data=await read(),sub=data.library.positive[0].subcategories[0],angry=sub.items.find(i=>i.text==='angry'),block=sub.items.find(i=>i.name==='怒っている');
+ assert.ok(angry);assert.equal(block.tagIds.length,3);
+ await page.locator('[data-item="'+angry.id+'"]').click();await page.locator('#field-name').fill('怒る');await page.locator('#field-description').fill('不機嫌な表情');await page.locator('#submit-editor').click();
+ await page.locator('[data-region-search="tag"]').fill('不機嫌');assert.equal(await page.locator('.tag').count(),1);assert.ok((await page.locator('.tag').innerText()).includes('怒る'));
+ await page.locator('[data-region-search="tag"]').fill('');
+ await page.locator('[data-item="'+block.id+'"]').click();await page.locator('#submit-editor').click();
+ await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='ブラウザ内に保存済み');data=await read();assert.equal(data.library.positive[0].subcategories[0].items.filter(i=>i.text==='angry').length,1);
+ const before=JSON.stringify(data);await page.locator('[data-copy-block="'+block.id+'"]').click();assert.equal((await page.evaluate(()=>navigator.clipboard.readText())).replace(/\r\n/g,'\n'),'angry,\nfrown,\nfurrowed brow,');assert.equal(JSON.stringify(await read()),before);assert.equal(await page.locator('#editor').evaluate(e=>e.open),false);
+ await page.locator('[data-page="prompt"]').click();await page.locator('[data-item="'+angry.id+'"]').click();await page.locator('[data-action="prompt-detail"]').click();assert.equal(await page.locator('#field-prompt').inputValue(),'angry');await page.locator('#cancel-editor').click();
+ await page.reload();await page.waitForSelector('[data-item="'+angry.id+'"]');assert.ok((await page.locator('[data-item="'+angry.id+'"]').innerText()).includes('怒る'));
+ await page.locator('[data-page="library"]').click();
+ await page.locator('[data-action="selection-mode"]').click();await page.locator('[data-item="'+angry.id+'"]').click();await page.locator('[data-action="make-block"]').click();await page.locator('#field-name').fill('選択から作成');await page.locator('#field-text').fill('angry, test added tag,');await page.locator('#submit-editor').click();
+ await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='ブラウザ内に保存済み');data=await read();assert.ok(data.library.positive[0].subcategories[0].items.some(i=>i.text==='test added tag'&&i.type==='tag'));
+ await page.locator('[data-page="png"]').click();
+ const base=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a5EsAAAAASUVORK5CYII=','base64');
+ const text=Buffer.from('parameters\0png angry, png frown,\nNegative prompt: blurry\nSteps: 20, Sampler: Euler, CFG scale: 7, Seed: 1, Size: 1x1');
+ const chunk=Buffer.alloc(text.length+12);chunk.writeUInt32BE(text.length);chunk.write('tEXt',4);text.copy(chunk,8);
+ let crc=0xffffffff;for(const byte of chunk.subarray(4,-4)){crc^=byte;for(let n=0;n<8;n++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}chunk.writeUInt32BE((crc^0xffffffff)>>>0,chunk.length-4);
+ await page.locator('#png-file').setInputFiles({name:'test.png',mimeType:'image/png',buffer:Buffer.concat([base.subarray(0,-12),chunk,base.subarray(-12)])});
+ await page.waitForSelector('[data-png-library="positive"]');
+ await page.locator('.png-text').first().evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);document.dispatchEvent(new Event('selectionchange'));});
+ await page.locator('[data-png-library="positive"]').click();await page.locator('#png-kind').selectOption('block');await page.locator('#field-name').fill('PNG block');await page.locator('#submit-editor').click();
+ await page.waitForFunction(()=>document.querySelector('#save-status').textContent==='ブラウザ内に保存済み');data=await read();assert.ok(data.library.positive.flatMap(c=>c.subcategories.flatMap(s=>s.items)).some(i=>i.text==='png frown'&&i.type==='tag'));
+ await page.locator('[data-page="library"]').click();await page.locator('#language').selectOption('en');assert.equal(await page.locator('.repository-link').textContent(),'View on GitHub');assert.equal(await page.locator('.repository-link').getAttribute('href'),'https://github.com/arvelt/prompt-library');assert.equal(await page.locator('[data-copy-block="'+block.id+'"]').textContent(),'Copy');
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:require('path').join(require('os').tmpdir(),'prompt-library-mobile.png'),fullPage:true});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);
+ console.log('Browser QA passed: block save/edit, selection and PNG creation, tag metadata/search/reload, literal clipboard copy without state changes, prompt text, English labels, mobile layout.');
+ }finally{await browser.close();server.close();}
+})().catch(e=>{console.error(e);process.exit(1);});
