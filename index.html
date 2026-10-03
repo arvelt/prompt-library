@@ -98,6 +98,8 @@
 .current-chips .current-direct{flex-basis:100%;min-width:0;padding:9px 11px;border:1px solid var(--border);border-radius:6px;background:#171920;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.65}.current-direct .field-label{margin-bottom:4px}
 .current-workspace{position:relative;padding-bottom:23px}.prompt-resize{position:absolute;bottom:0;left:0;right:0;height:15px;cursor:ns-resize;touch-action:none;user-select:none;display:flex;align-items:center;justify-content:center}.prompt-resize::after{content:"";width:44px;height:3px;border-radius:3px;background:#73638e}.prompt-resize:hover,.prompt-resize:focus-visible{background:#393047;outline:none}.prompt-resize:focus-visible::after{background:var(--accent)}
 .library-active{height:auto;min-height:100dvh;overflow:visible}.library-active main{flex:none}.shared-workspace,.shared-workspace .library-workspace,.library-columns,.item-regions,.region-content,.region-items{flex:none}.library-columns,.item-regions{align-items:start}.region-items,.classification-list{overflow:visible;overscroll-behavior:auto;scrollbar-gutter:auto}.library-workspace{min-height:0}.item-region .region-items{min-height:40px}
+/* Tag metadata and unobtrusive repository access. */
+.tag-details{display:flex;flex-direction:column;min-width:0;gap:3px}.tag-details strong{font-weight:600}.tag-details small{font-size:11px;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}.repository-link{margin-left:auto;align-self:center;color:var(--muted);font-size:11px;text-decoration:none;padding:6px}.repository-link:hover{color:var(--text)}.repository-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.block-footer button{font-size:11px;padding:4px 8px}
 </style>
   
 </head>
@@ -106,7 +108,7 @@
     <div class="brand"><span class="logo">P</span><div><h1>Prompt Library</h1><span class="muted" data-i18n="自分の部品で、Promptを組み立てる"></span></div></div>
     <div class="header-actions"><span id="save-status" role="status">読み込み中…</span><select id="language" aria-label="日本語 / English"><option value="ja">日本語</option><option value="en">EN</option></select><details class="data-menu"><summary data-i18n="データ"></summary><div class="data-menu-body"><button id="export" data-i18n="JSON Export">JSON Export</button><button id="import" data-i18n="JSON Import">JSON Import</button><button id="preset-export" data-i18n="現在のPromptをExport">現在のPromptをExport</button><button id="preset-import" data-i18n="Prompt単体をImport">Prompt単体をImport</button></div></details><input id="import-file" type="file" accept="application/json,.json" hidden><input id="preset-import-file" type="file" accept="application/json,.json" hidden></div>
   </header>
-  <nav class="tabs" aria-label="画面"><button class="active" data-page="prompt" data-i18n="Prompt" aria-current="page">Prompt</button><button data-page="library" data-i18n="Library">Library</button><button data-page="png" data-i18n="PNG Info">PNG Info</button></nav>
+  <nav class="tabs" aria-label="画面"><button class="active" data-page="prompt" data-i18n="Prompt" aria-current="page">Prompt</button><button data-page="library" data-i18n="Library">Library</button><button data-page="png" data-i18n="PNG Info">PNG Info</button><a class="repository-link" href="https://github.com/arvelt/prompt-library" target="_blank" rel="noopener noreferrer" data-i18n="GitHubで表示">GitHubで表示</a></nav>
   <main id="main"></main>
   <div id="toast" class="toast" role="status" hidden></div>
   <dialog id="editor" aria-labelledby="editor-title"><form id="editor-form"><div class="dialog-heading"><h2 id="editor-title"></h2><button type="button" id="close-editor" aria-label="閉じる">×</button></div><div id="editor-fields"></div><div id="editor-error" class="error" role="alert"></div><div class="dialog-footer"><button type="button" class="danger" id="delete-editor" data-i18n="削除" hidden>削除</button><div class="dialog-normal-actions"><button type="button" id="cancel-editor" data-i18n="キャンセル">キャンセル</button><button type="submit" class="primary" id="submit-editor">保存</button></div></div></form></dialog>
@@ -117,6 +119,7 @@
   const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // Translate source-owned UI fragments only; interpolated user values never pass through t().
   const uiPairs=[
+    ['日本語表示名（任意）','Japanese display name (optional)'],['説明（任意）','Description (optional)'],['GitHubで表示','View on GitHub'],['ブロックをコピーしました。','Block copied.'],['ブロックを手動コピー','Copy block manually'],['コピー','Copy'],
     ['現在のPromptをExport','Export current prompt'],['Prompt単体をImport','Import one prompt'],
     ['Prompt単体のExport','Export one prompt'],['Prompt単体のImport','Import one prompt'],
     ['選択中のPromptセットのPositive / Negative、部品の選択・順序、直接入力の本文を保存します。Libraryは変更しません。','Save the selected prompt set: positive / negative, selected components, order, and direct text. Library is unchanged.'],
@@ -335,15 +338,15 @@
     const pressed=i=>selectable&&(manage?selected.has(i.id):isPromptSelected(i.id));
     const attrs=i=>selectable?' aria-pressed="'+pressed(i)+'"':' title="'+(type==='tag'?t('Tag'):t('Block'))+t('を編集"');
     const check=i=>selectable?'<span class="prompt-check" aria-hidden="true">'+(pressed(i)?'✓':'')+'</span> ':'';
-    if(type==='tag')return '<div class="tag-grid">'+items.map(i=>'<div class="tag '+(pressed(i)?'selected':'')+'"><button data-item="'+i.id+'"'+attrs(i)+'>'+check(i)+escape(i.text)+'</button></div>').join('')+'</div>';
-    return '<div class="block-grid">'+items.map(i=>'<article class="block '+(pressed(i)?'selected':'')+'"><button class="block-main" data-item="'+i.id+'"'+attrs(i)+'><strong>'+check(i)+escape(i.name)+'</strong><p>'+escape(i.text)+'</p></button></article>').join('')+'</div>';
+    if(type==='tag')return '<div class="tag-grid">'+items.map(i=>'<div class="tag '+(pressed(i)?'selected':'')+'"><button data-item="'+i.id+'"'+attrs(i)+'>'+check(i)+'<span class="tag-details"><strong>'+escape(i.name||i.text)+'</strong>'+(i.name&&i.name!==i.text?'<small>'+escape(i.text)+'</small>':'')+(i.description?'<small>'+escape(i.description)+'</small>':'')+'</span></button></div>').join('')+'</div>';
+    return '<div class="block-grid">'+items.map(i=>'<article class="block '+(pressed(i)?'selected':'')+'"><button class="block-main" data-item="'+i.id+'"'+attrs(i)+'><strong>'+check(i)+escape(i.name)+'</strong><p>'+escape(i.text)+'</p></button><div class="block-footer"><button data-copy-block="'+i.id+'">'+t('コピー')+'</button></div></article>').join('')+'</div>';
   }
 
   function libraryHTML(manage) {
     const {categories,cat,sub}=currentView();
     const region=(type,label)=>{
       const query=view[activeSide][type+'Search']||'';
-      const items=(sub?.items||[]).filter(i=>i.type===type && L`${i.name} ${i.text}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+      const items=(sub?.items||[]).filter(i=>i.type===type && `${i.name} ${i.text} ${i.description||''}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
       return L`<section class="panel item-region" aria-label="${label}"><div class="panel-title"><h2>${label} <span class="count">${items.length} 件</span></h2><button data-action="add-${type}" ${sub?'':'disabled'}>＋ ${type==='tag'?t('Tag'):t('Block')}</button></div><div class="region-content"><input class="search" data-region-search="${type}" aria-label="${label}を検索" placeholder="${label}を検索" value="${escape(query)}"><div class="region-items" tabindex="0" data-scroll="${type}:${sub?.id||'none'}">${itemsHTML(items,manage,type)}</div>${!sub?t('<p class="hint">サブカテゴリを選択してください。</p>'):''}</div></section>`;
     };
     return L`<div class="library-workspace"><div class="library-columns">
@@ -393,6 +396,7 @@
       else if(d.item){const i=currentView().sub?.items.find(i=>i.id===d.item);if(!i)return;if(page==='library'){if(i.type==='tag'&&selectionModes[activeSide]){selected.has(i.id)?selected.delete(i.id):selected.add(i.id);render();}else editItem(i.id);}else{togglePrompt(i);}}
       else if(d.remove){const p=currentPrompts()[activeSide];p.items=p.items.filter(i=>i.id!==d.remove);persist();render();}
       else if(d.move){const list=currentPrompts()[activeSide].items;const from=list.findIndex(i=>i.id===d.move),to=from+Number(d.direction);if(to>=0&&to<list.length){[list[from],list[to]]=[list[to],list[from]];persist();render();}}
+      else if(d.copyBlock){const item=currentView().sub?.items.find(i=>i.id===d.copyBlock&&i.type==='block');if(item)copyText(item.text,t('ブロックをコピーしました。'),t('ブロックを手動コピー'));}
       else if(d.copy)copyPrompt(d.copy);
       else if(d.action)runAction(d.action);
       else if(d.pngLibrary)sendSelectionToLibrary(d.pngLibrary);
@@ -411,7 +415,7 @@
     const input=$('#png-file');if(input)input.onchange=()=>{if(input.files[0])loadPNG(input.files[0]);};
     const drop=$('#drop-zone');if(drop){drop.ondragover=e=>{e.preventDefault();drop.classList.add('over');};drop.ondragleave=()=>drop.classList.remove('over');drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])loadPNG(e.dataTransfer.files[0]);};}
   }
-  function field(name,label,value='',multiline=false) {return L`<div class="form-field"><label for="field-${name}">${label}</label>${multiline?L`<textarea id="field-${name}" name="${name}" required>${escape(value)}</textarea>`:L`<input id="field-${name}" name="${name}" value="${escape(value)}" required maxlength="${name==='name'?200:10000}">`}</div>`;}
+  function field(name,label,value='',multiline=false,required=true) {return L`<div class="form-field"><label for="field-${name}">${label}</label>${multiline?L`<textarea id="field-${name}" name="${name}" ${required?'required':''} maxlength="100000">${escape(value)}</textarea>`:L`<input id="field-${name}" name="${name}" value="${escape(value)}" ${required?'required':''} maxlength="${name==='name'?200:10000}">`}</div>`;}
   function showDialog(title,fields,onSubmit,button=t('保存')) {
     $('#delete-editor').hidden=true;$('#delete-editor').disabled=false;$('#delete-editor').title='';$('#delete-editor').onclick=null;$('#editor-title').textContent=title;$('#editor-fields').innerHTML=fields;$('#editor-error').textContent='';$('#submit-editor').textContent=button;$('#cancel-editor').hidden=button===t('閉じる');$('#submit-editor').className=button===t('削除')?'danger':'primary';dialogSubmit=onSubmit;localizeStatic();$('#editor').showModal();
   }
@@ -429,7 +433,7 @@
     if(action==='add-sub'&&cat)showDialog(t('サブカテゴリ追加'),field('name',t('サブカテゴリ名')),form=>{const name=trimField(form,'name'),s={id:uid(),name,items:[]};cat.subcategories.push(s);v.sub=s.id;persist();render();});
     if(action==='make-block'){const chosen=selectedTags();if(!chosen.length)return;
       const options=state.library[activeSide].flatMap(c=>c.subcategories.map(s=>'<option value="'+s.id+'" '+(s.id===sub?.id?'selected':'')+'>'+escape(c.name+' / '+s.name)+'</option>')).join('');
-      showDialog(t('選択したTagからBlockを作成'),field('name',t('Block名'))+t('<div class="form-field"><label for="block-destination">保存先</label><select id="block-destination" name="destination" required>')+options+t('</select></div><p class="hint">含まれるTag: ')+chosen.map(i=>escape(i.text)).join(' / ')+'</p>'+field('text',t('Prompt内容'),chosen.map(i=>i.text).join(', '),true),form=>{const name=trimField(form,'name'),text=trimField(form,'text'),destination=new FormData(form).get('destination');const c=state.library[activeSide].find(c=>c.subcategories.some(s=>s.id===destination)),target=c?.subcategories.find(s=>s.id===destination);if(!target)throw new Error(t('保存先を選択してください。'));target.items.push({id:uid(),type:'block',name,text,tagIds:chosen.map(i=>i.id)});selected.clear();v.category=c.id;v.sub=target.id;v.type='block';persist();render();},t('作成'));}
+      showDialog(t('選択したTagからBlockを作成'),field('name',t('Block名'))+t('<div class="form-field"><label for="block-destination">保存先</label><select id="block-destination" name="destination" required>')+options+t('</select></div><p class="hint">含まれるTag: ')+chosen.map(i=>escape(i.text)).join(' / ')+'</p>'+field('text',t('Prompt内容'),chosen.map(i=>i.text).join(', '),true),form=>{const name=trimField(form,'name'),text=trimField(form,'text'),destination=new FormData(form).get('destination');const c=state.library[activeSide].find(c=>c.subcategories.some(s=>s.id===destination)),target=c?.subcategories.find(s=>s.id===destination);if(!target)throw new Error(t('保存先を選択してください。'));const block={id:uid(),type:'block',name,text,tagIds:chosen.map(i=>i.id)};registerBlockTags(block,target);target.items.push(block);selected.clear();v.category=c.id;v.sub=target.id;v.type='block';persist();render();},t('作成'));}
     if(action==='clear-selection'){selected.clear();render();}
     if(action==='clear-prompt')showDialog(L`${sideName(activeSide)}をクリア`,L`<p class="confirm-description">追加した部品と直接追記を消去します。</p>`,()=>{currentPrompts()[activeSide]={items:[],direct:''};persist();render();},t('クリア'));
   }
@@ -447,17 +451,40 @@
     const {sub,v}=currentView();if(!sub)return;const item=sub.items.find(i=>i.id===id),type=item?.type||addType||v.type;
     const tags=allTags();const members=new Set((item?.tagIds||[]).filter(id=>tags.some(t=>t.id===id)));
     const tagFields=type==='block'?t('<div class="form-field"><label for="member-search">含まれるTag</label><input id="member-search" placeholder="Library全体のTagを検索"><div class="member-list">')+tags.map(t=>'<label class="member-row"><input type="checkbox" name="members" value="'+t.id+'" '+(members.has(t.id)?'checked':'')+'><span>'+escape(t.text)+'<small>'+escape(t.category+' / '+t.subcategory)+'</small></span></label>').join('')+t('</div><p class="hint">タグを選ぶと既存の本文に追加します。解除すると一致するタグ本文だけを取り除きます。直接編集した部分は保持します。</p></div>'):'';
-    showDialog(L`${type==='tag'?t('Tag'):t('Block')} ${item?t('編集'):t('追加')}`,(type==='block'?field('name',t('Block名'),item?.name||''):'')+tagFields+field('text',type==='tag'?t('TagのPrompt内容'):t('Prompt内容'),item?.text||'',type==='block'),form=>{const text=trimField(form,'text'),name=type==='block'?trimField(form,'name'):text;const values={name,text};if(type==='block')values.tagIds=new FormData(form).getAll('members');if(item)Object.assign(item,values);else {sub.items.push({id:uid(),type,...values});v.type=type;}persist();render();},item?t('更新'):t('追加'));
+    showDialog(L`${type==='tag'?t('Tag'):t('Block')} ${item?t('編集'):t('追加')}`,(type==='block'?field('name',t('Block名'),item?.name||''):field('name',t('日本語表示名（任意）'),item?.name||'',false,false)+field('description',t('説明（任意）'),item?.description||'',true,false))+tagFields+field('text',type==='tag'?t('TagのPrompt内容'):t('Prompt内容'),item?.text||'',type==='block'),form=>{const text=trimField(form,'text'),name=type==='block'?trimField(form,'name'):new FormData(form).get('name').toString().trim();const values={name,text};if(type==='tag')values.description=new FormData(form).get('description').toString().trim();if(type==='block'){values.tagIds=new FormData(form).getAll('members');registerBlockTags(values,sub);}if(item)Object.assign(item,values);else {sub.items.push({id:uid(),type,...values});v.type=type;}persist();render();},item?t('更新'):t('追加'));
     if(type==='block'){
       $('#member-search').oninput=event=>{const query=event.target.value.toLocaleLowerCase();document.querySelectorAll('.member-row').forEach(row=>row.hidden=!row.textContent.toLocaleLowerCase().includes(query));};
       document.querySelectorAll('[name="members"]').forEach(check=>check.onchange=()=>{check.checked?members.add(check.value):members.delete(check.value);const tag=tags.find(t=>t.id===check.value);if(tag)$('#field-text').value=updateBlockTagText($('#field-text').value,tag.text,check.checked);});
     }
     if(item){$('#delete-editor').hidden=false;$('#delete-editor').onclick=()=>{sub.items=sub.items.filter(i=>i.id!==id);selected.delete(id);for(const c of state.library[activeSide])for(const s of c.subcategories)for(const i of s.items)if(i.tagIds)i.tagIds=i.tagIds.filter(t=>t!==id);persist();$('#editor').close();render();toast((type==='tag'?t('Tag'):t('Block'))+t('を削除しました。'));};}
   }
+  // Split only outside grouped prompt expressions; escaped separators remain literal.
+  function parseBlockTags(text) {
+    const parts=[],stack=[];let start=0,escaped=false;
+    for(let i=0;i<text.length;i++){
+      const char=text[i];if(escaped){escaped=false;continue;}if(char==='\\'){escaped=true;continue;}
+      if('([{<'.includes(char))stack.push(char);
+      else if(')]}>'.includes(char)){if(stack.at(-1)==='([{<'[')]}>'.indexOf(char)])stack.pop();}
+      else if(!stack.length&&(char===','||char==='\n'||char==='\r')){parts.push(text.slice(start,i).trim());start=i+1;}
+    }
+    parts.push(text.slice(start).trim());return [...new Set(parts.filter(Boolean))];
+  }
+  function registerBlockTags(block,sub,side=activeSide) {
+    const tags=state.library[side].flatMap(c=>c.subcategories.flatMap(s=>s.items.filter(i=>i.type==='tag')));
+    const byText=new Map(tags.map(i=>[i.text.trim(),i]));
+    block.tagIds=parseBlockTags(block.text).map(text=>{
+      let tag=byText.get(text);
+      if(!tag){tag={id:uid(),type:'tag',name:'',description:'',text};sub.items.push(tag);byText.set(text,tag);}
+      return tag.id;
+    });
+  }
+  async function copyText(text,message,title) {
+    try {await navigator.clipboard.writeText(text);toast(message);}
+    catch {const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.left='-10000px';document.body.append(temp);temp.select();let ok=false;try{ok=document.execCommand('copy');}catch{}temp.remove();if(ok)toast(message);else showDialog(title,L`<label class="form-field">コピーするテキスト<textarea readonly>${escape(text)}</textarea></label>`,()=>{},t('閉じる'));}
+  }
   async function copyPrompt(side) {
     const text=finalPrompt(side);if(!text){toast(L`${sideName(side)}は空です。`);return;}
-    try {await navigator.clipboard.writeText(text);toast(L`${sideName(side)}をコピーしました。`);}
-    catch {const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.left='-10000px';document.body.append(temp);temp.select();let ok=false;try{ok=document.execCommand('copy');}catch{}temp.remove();if(ok)toast(L`${sideName(side)}をコピーしました。`);else showDialog(L`${sideName(side)}を手動コピー`,L`<label class="form-field">コピーするテキスト<textarea readonly>${escape(text)}</textarea></label>`,()=>{},t('閉じる'));}
+    await copyText(text,L`${sideName(side)}をコピーしました。`,L`${sideName(side)}を手動コピー`);
   }
   function validateLegacy(data) {
     const fail=()=>{throw new Error(t('JSONの形式が対応していません。Prompt LibraryのExportファイルを選んでください。'));};
@@ -466,7 +493,7 @@
     const validString=(s,max=100000)=>typeof s==='string'&&s.length<=max;
     const identifier=id=>{if(!validString(id,200)||!/^[a-zA-Z0-9_-]+$/.test(id)||ids.has(id))fail();ids.add(id);return id;};
     const name=n=>{if(!validString(n,10000)||!n.trim())fail();return n;};
-    const item=i=>{if(!i||!['tag','block'].includes(i.type)||!validString(i.text)||!i.text.trim())fail();if(++itemCount>100000)fail();if(i.tagIds!==undefined&&(!Array.isArray(i.tagIds)||i.tagIds.length>100000||i.tagIds.some(id=>!validString(id,200)||!/^[a-zA-Z0-9_-]+$/.test(id))))fail();return {id:identifier(i.id),type:i.type,name:name(i.name),text:i.text,...(i.type==='block'&&i.tagIds?{tagIds:[...new Set(i.tagIds)]}:{})};};
+    const item=i=>{if(!i||!['tag','block'].includes(i.type)||!validString(i.text)||!i.text.trim())fail();if(++itemCount>100000)fail();if(i.tagIds!==undefined&&(!Array.isArray(i.tagIds)||i.tagIds.length>100000||i.tagIds.some(id=>!validString(id,200)||!/^[a-zA-Z0-9_-]+$/.test(id))))fail();return {id:identifier(i.id),type:i.type,name:i.type==='tag'?(validString(i.name,10000)?i.name:fail()):name(i.name),text:i.text,...(i.description!==undefined?{description:validString(i.description)?i.description:fail()}:{}),...(i.type==='block'&&i.tagIds?{tagIds:[...new Set(i.tagIds)]}:{})};};
     const clean={version:1,library:{},prompts:{}};
     for(const side of sides){
       if(!Array.isArray(data.library[side])||data.library[side].length>10000)fail();
@@ -720,7 +747,7 @@
       const category=categories.find(c=>c.id===values.get('category')),sub=category?.subcategories.find(s=>s.id===values.get('subcategory'));
       if(!sub)throw new Error(t('保存先を選択してください。'));
       const name=kind==='block'?trimField(form,'name'):text;
-      sub.items.push({id:uid(),type:kind,name,text,...(kind==='block'?{tagIds:[]}:{})});
+      const item={id:uid(),type:kind,name,text,...(kind==='block'?{tagIds:[]}:{})};if(kind==='block')registerBlockTags(item,sub,side);sub.items.push(item);
       persist();toast(t('選択部分をLibraryに追加しました。'));
     },t('追加'));
     const cat=$('#png-category'),sub=$('#png-subcategory');
